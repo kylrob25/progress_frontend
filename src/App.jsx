@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route} from "react-router-dom";
 import ViewUsers from "./pages/user/ViewUsers";
 import NoPage from "./pages/NoPage";
 import Layout from "./pages/Layout";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
 import ViewUser from "./pages/user/ViewUser"
 import Trainer from "./pages/trainer/ViewTrainer";
 import ViewTrainers from "./pages/trainer/ViewTrainers";

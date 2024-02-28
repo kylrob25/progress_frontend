@@ -1,30 +1,34 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { login } from '../../features/userSlice';
 import axios from "axios";
 
+
 const Login = () => {
-    const [forename, setForename] = useState("");
-    const [surname, setSurname] = useState("");
-    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/register', {
-                username,
-                forename,
-                surname,
+            const response = await axios.post('http://localhost:8080/api/auth/login', {
                 email,
                 password
             })
 
-            // TODO:
-        } catch (error) {
-            alert(error)
-            console.error("Error registering user:", error);
+            if (response.ok) {
+                // TODO:
+                /*
+                if (response.data.token) {
+                    localStorage.setItem('user', JSON.stringify(response.data))
+                }
+                 */
+            }
+        } catch (err) {
+
         }
     };
 
@@ -33,54 +37,18 @@ const Login = () => {
             <Card sx={{ width: '100%', maxWidth: 600, m: 2 }}>
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Typography variant="h5" component="h2" gutterBottom className="text-uppercase text-center">
-                        Register
+                        Login
                     </Typography>
                     <Typography variant="body2" component="p" className="text-center mb-4">
-                        Already have an account? <Link href="/login" underline="hover">Login</Link>
+                        Don't have an account? <Link href="/auth/Register" underline="hover">Register</Link>
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="username"
-                            label="Username"
-                            name="username"
-                            autoComplete="username"
-                            autoFocus
-                            variant="outlined"
-                            onChange={e => setUsername(e.target.value)}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="forename"
-                            label="Forename"
-                            name="forename"
-                            autoComplete="forename"
-                            autoFocus
-                            variant="outlined"
-                            onChange={e => setForename(e.target.value)}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="surname"
-                            label="Surname"
-                            name="surname"
-                            autoComplete="surname"
-                            autoFocus
-                            variant="outlined"
-                            onChange={e => setSurname(e.target.value)}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
                             id="email"
-                            label="Email"
+                            label="Email Address"
                             name="email"
                             autoComplete="email"
                             autoFocus
@@ -104,7 +72,7 @@ const Login = () => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}>
-                            Register
+                            Login
                         </Button>
                     </Box>
                     <Typography variant="body2">
