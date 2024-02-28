@@ -1,12 +1,31 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
+import axios from "axios";
 
 const Login = () => {
+    const [forename, setForename] = useState("");
+    const [surname, setSurname] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/auth/register', {
+                username,
+                forename,
+                surname,
+                email,
+                password
+            })
+
+            // TODO:
+        } catch (error) {
+            alert(error)
+            console.error("Error registering user:", error);
+        }
     };
 
     return (
@@ -17,15 +36,51 @@ const Login = () => {
                         Register
                     </Typography>
                     <Typography variant="body2" component="p" className="text-center mb-4">
-                        Already have an account? <Link href="/login" underline="hover">Register</Link>
+                        Already have an account? <Link href="/login" underline="hover">Login</Link>
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
                             fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                            variant="outlined"
+                            onChange={e => setUsername(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="forename"
+                            label="Forename"
+                            name="forename"
+                            autoComplete="forename"
+                            autoFocus
+                            variant="outlined"
+                            onChange={e => setForename(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="surname"
+                            label="Surname"
+                            name="surname"
+                            autoComplete="surname"
+                            autoFocus
+                            variant="outlined"
+                            onChange={e => setSurname(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
                             id="email"
-                            label="Email Address"
+                            label="Email"
                             name="email"
                             autoComplete="email"
                             autoFocus
@@ -49,7 +104,7 @@ const Login = () => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}>
-                            Login
+                            Register
                         </Button>
                     </Box>
                     <Typography variant="body2">

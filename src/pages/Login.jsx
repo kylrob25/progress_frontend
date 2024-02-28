@@ -1,12 +1,35 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { login } from '../features/userSlice';
+import axios from "axios";
+
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/auth/login', {
+                email,
+                password
+            })
+
+            if (response.ok) {
+                // TODO:
+                /*
+                if (response.data.token) {
+                    localStorage.setItem('user', JSON.stringify(response.data))
+                }
+                 */
+            }
+        } catch (err) {
+
+        }
     };
 
     return (
