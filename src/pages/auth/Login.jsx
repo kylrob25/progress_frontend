@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
 import axios from "axios";
-
+import {useNavigate} from 'react-router-dom'
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -18,6 +19,7 @@ const Login = () => {
 
             if (response.data.token) {
                 localStorage.setItem('user', JSON.stringify(response.data))
+                navigate('/')
             }
         } catch (err) {
             alert(err)
