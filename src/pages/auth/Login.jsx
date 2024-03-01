@@ -1,34 +1,26 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { login } from '../../features/userSlice';
 import axios from "axios";
 
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
             const response = await axios.post('http://localhost:8080/api/auth/login', {
-                email,
+                username,
                 password
             })
 
-            if (response.ok) {
-                // TODO:
-                /*
-                if (response.data.token) {
-                    localStorage.setItem('user', JSON.stringify(response.data))
-                }
-                 */
+            if (response.data.token) {
+                localStorage.setItem('user', JSON.stringify(response.data))
             }
         } catch (err) {
-
+            alert(err)
         }
     };
 
@@ -47,13 +39,13 @@ const Login = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                             variant="outlined"
-                            onChange={e => setEmail(e.target.value)}
+                            onChange={e => setUsername(e.target.value)}
                         />
                         <TextField
                             margin="normal"
