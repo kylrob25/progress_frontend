@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom";
-import ViewUsers from "./pages/user/ViewUsers";
+import ViewUsers from "./pages/admin/ViewUsers";
 import NoPage from "./pages/NoPage";
 import Layout from "./pages/Layout";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
-import ViewUser from "./pages/user/ViewUser"
+import ViewUser from "./pages/admin/ViewUser"
 import Trainer from "./pages/trainer/ViewTrainer";
 import ViewTrainers from "./pages/trainer/ViewTrainers";
-import CreateUser from "./pages/user/CreateUser";
-import EditUser from "./pages/user/EditUser";
+import CreateUser from "./pages/admin/CreateUser";
+import EditUser from "./pages/admin/EditUser";
 
 const App = () => {
     return (

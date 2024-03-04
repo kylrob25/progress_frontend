@@ -10,6 +10,7 @@ const NavbarComponent = () => {
 
     const [loggedIn, setLoggedIn] = useState(false)
     const [username, setUsername] = useState(null)
+    const [admin, setAdmin] = useState(false)
 
     const handleToggle = () => {
         setOpen(!open);
@@ -27,6 +28,10 @@ const NavbarComponent = () => {
 
                 setLoggedIn(true)
                 setUsername(response.data.username)
+
+                if (response.data.roles.includes('ADMIN')) {
+                    setAdmin(true)
+                }
             }
         } catch (err) {
             alert(err)
@@ -48,9 +53,19 @@ const NavbarComponent = () => {
                 <ListItem button component={Link} to="/">
                     <ListItemText primary="Home" />
                 </ListItem>
-                <ListItem button component={Link} to="/admin/view-users">
-                    <ListItemText primary="Users" />
-                </ListItem>
+
+                {
+                    admin ? (
+                        <>
+                            <ListItem button component={Link} to="/admin/view-users">
+                                <ListItemText primary="Users" />
+                            </ListItem>
+                        </>
+                    ) : (
+                        <>
+                        </>
+                    )
+                }
             </List>
         </Box>
     );
