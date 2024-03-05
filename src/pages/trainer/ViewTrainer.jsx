@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
-import {Card, CardContent, Typography, Grid, CardMedia, Container} from "@mui/material";
+import {Card, CardContent, Typography, Grid, CardMedia, Container, Box, Button} from "@mui/material";
 import axios from "axios";
 
 const ViewTrainer = () => {
@@ -24,33 +24,58 @@ const ViewTrainer = () => {
     if (!trainer) return <Typography color="error">Loading...</Typography>;
 
     return (
-        <Container style={{ marginTop: '64px', padding: '20px' }}>
-            <Grid container justify="center" style={{ maxWidth: '100%', margin: '0 auto' }}>
+        <Container sx={{ mt: 8, padding: '20px' }}>
+            <Grid container justifyContent="center" sx={{ maxWidth: '100%', margin: '0 auto' }}>
                 <Grid item xs={12} md={8} lg={6}>
                     <Card>
-                        <CardMedia
-                            component="img"
-                            style={{ height: '200px', objectFit: 'cover' }}
-                            image={trainer.pictureUrl}
-                            alt={trainer.username}
-                        />
-                        <CardContent>
-                            <Typography variant="h5" gutterBottom>
-                                {trainer.username}
-                            </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2 }}>
+                            {/* Left section: Box for picture and username */}
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                            }}>
+                                <Box sx={{
+                                    textAlign: 'center',
+                                    mr: 5,
+                                }}>
+                                    <CardMedia
+                                        component="img"
+                                        sx={{
+                                            height: '140px',
+                                            width: '140px',
+                                            objectFit: 'cover',
+                                            borderRadius: '50%',
+                                        }}
+                                        image={trainer.pictureUrl}
+                                        alt={trainer.username}
+                                    />
+                                    <Typography variant="h6" sx={{ mt: 1 }}>
+                                        {trainer.username}
+                                    </Typography>
+                                </Box>
 
-                            <Typography variant="body1">
-                                Cost: £{trainer.cost}
-                            </Typography>
 
-                            <Typography variant="body1">
-                                Location: {trainer.location}
-                            </Typography>
+                                <Box>
+                                    <Typography variant="body1">
+                                        Cost: £{trainer.cost}
+                                    </Typography>
 
-                            <Typography variant="body1">
-                                Specialization: {trainer.specialization}
-                            </Typography>
-                        </CardContent>
+                                    <Typography variant="body1">
+                                        Location: {trainer.location}
+                                    </Typography>
+
+                                    <Typography variant="body1">
+                                        Specialization: {trainer.specialization}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ alignSelf: 'start' }}>
+                                <Button variant="contained" color="primary" onClick={() => { /* todo */ }}>
+                                    Contact
+                                </Button>
+                            </Box>
+                        </Box>
                     </Card>
                 </Grid>
             </Grid>

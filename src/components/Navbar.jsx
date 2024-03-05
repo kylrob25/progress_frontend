@@ -39,9 +39,7 @@ const NavbarComponent = () => {
                 setLoggedIn(true)
                 setUsername(user.username)
 
-                await axios.post("http://localhost:8080/api/auth/refresh")
-
-                if (user.roles.includes('ADMIN')) {
+                if (/**user.roles.includes('ADMIN')**/true) {
                     setAdmin(true)
                 }
             }
