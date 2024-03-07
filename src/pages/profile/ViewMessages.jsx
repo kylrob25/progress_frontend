@@ -88,7 +88,7 @@ const ViewMessages = () => {
                         <ListItemText
                             primary={`Conversation ${index + 1}`}
                             secondary={
-                                conversation.lastMessageId === -1 ?
+                                conversation.lastMessageId === "-1" ?
                                     "No messages in this conversation." :
                                     `Last message at ${new Date(conversation.lastTimestamp).toLocaleString()}: "${conversation.lastMessage}"`
                             }
