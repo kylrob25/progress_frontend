@@ -9,6 +9,7 @@ import Trainer from "./pages/trainer/ViewTrainer";
 import ViewTrainers from "./pages/trainer/ViewTrainers";
 import CreateUser from "./pages/admin/CreateUser";
 import EditUser from "./pages/admin/EditUser";
+import ViewMessages from "./pages/profile/ViewMessages";
 
 const App = () => {
     return (
@@ -25,7 +26,9 @@ const App = () => {
                     <Route path="/register" element={<Register/>} />
                     <Route path="/login" element={<Login/>} />
 
-                    <Route path="trainer/:username" element={<Trainer/>} />
+                    <Route path="/trainer/:username" element={<Trainer/>} />
+
+                    <Route path="/messages" element={<ViewMessages/>} />
 
                     <Route path="*" element={<NoPage />} />
                 </Route>

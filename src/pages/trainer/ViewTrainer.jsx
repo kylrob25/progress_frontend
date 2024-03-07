@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import {Card, CardContent, Typography, Grid, CardMedia, Container, Box, Button} from "@mui/material";
 import axios from "axios";
+import {useNavigate} from 'react-router-dom'
+import ViewUser from "../admin/ViewUser";
 
 const ViewTrainer = () => {
     const { username } = useParams();
     const [trainer, setTrainer] = useState(null);
+    const navigate = useNavigate()
 
     const fetchUser = async() => {
         try {
@@ -16,6 +19,19 @@ const ViewTrainer = () => {
             console.log(err.message);
         }
     };
+
+    const handleContactButton = async(e) => {
+        e.preventDefault()
+
+        const user = localStorage.getItem('user')
+
+        if (!user){
+            navigate("/login")
+        }
+
+        //TODO: Run refresh token
+        //TODO: Start conversation
+    }
 
     useEffect(() => {
         fetchUser();
@@ -29,7 +45,6 @@ const ViewTrainer = () => {
                 <Grid item xs={12} md={8} lg={6}>
                     <Card>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2 }}>
-                            {/* Left section: Box for picture and username */}
                             <Box sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -71,7 +86,7 @@ const ViewTrainer = () => {
                             </Box>
 
                             <Box sx={{ alignSelf: 'start' }}>
-                                <Button variant="contained" color="primary" onClick={() => { /* todo */ }}>
+                                <Button variant="contained" color="primary" onClick={(event) => handleContactButton(event)}>
                                     Contact
                                 </Button>
                             </Box>
