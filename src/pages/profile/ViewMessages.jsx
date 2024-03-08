@@ -10,7 +10,7 @@ import {
     Button,
     ListItem,
     List,
-    Divider, ListItemText
+    Divider, ListItemText, TextField
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
@@ -19,6 +19,7 @@ const ViewMessages = () => {
     const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState('');
     const navigate = useNavigate()
 
     const fetchConversations = async () => {
@@ -34,7 +35,7 @@ const ViewMessages = () => {
                         const message = res.data;
                         return {
                             ...conversation,
-                            lastMessage: message.message,
+                            lastMessage: message.text,
                             lastTimestamp: message.timestamp
                         };
                     }
@@ -80,6 +81,25 @@ const ViewMessages = () => {
         }
     };
 
+    const handleSendMessage = async () => {
+        if (!newMessage.trim()) return;
+        try {
+            const userStr = localStorage.getItem('user');
+            const user = JSON.parse(userStr);
+            const res = await axios.post(`http://localhost:8080/api/message`, {
+                conversationId: selectedConversation.id,
+                senderId: user.id,
+                text: newMessage,
+            });
+            const sentMessage = res.data;
+
+            setMessages([...messages, sentMessage]);
+            setNewMessage('');
+        } catch (err) {
+            console.error("Failed to send message:", err.message);
+        }
+    }
+
 
     useEffect(() => {
         fetchConversations();
@@ -124,7 +144,7 @@ const ViewMessages = () => {
                                     {messages.map((message, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={message.content}
+                                                primary={message.text}
                                                 secondary={new Date(message.timestamp).toLocaleString()}
                                             />
                                         </ListItem>
@@ -133,6 +153,31 @@ const ViewMessages = () => {
                             ) : (
                                 <Typography>No messages in this conversation.</Typography>
                             )}
+
+                            <Box>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    placeholder="Type a message..."
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSendMessage();
+                                        }
+                                    }}
+                                    margin="normal"
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={()=> handleSendMessage()}
+                                    style={{ marginBottom: '20px' }}
+                                >
+                                    Send
+                                </Button>
+                            </Box>
                         </Box>
                     ) : (
                         <Typography>Select a conversation to view messages.</Typography>
