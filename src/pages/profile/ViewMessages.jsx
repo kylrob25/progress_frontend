@@ -20,6 +20,7 @@ const ViewMessages = () => {
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [newParticipantUsername, setNewParticipantUsername] = useState('')
     const navigate = useNavigate()
 
     const fetchConversations = async () => {
@@ -55,6 +56,7 @@ const ViewMessages = () => {
             if (userStr) {
                 const user = JSON.parse(userStr);
                 const response = await axios.post('http://localhost:8080/api/conversation', {
+                    creatorId: user.id,
                     participantIds: [user.id],
                     messageIds: [],
                     lastMessageId: -1
@@ -105,6 +107,9 @@ const ViewMessages = () => {
 
     }
 
+    const handleAddParticipant = async () => {
+    }
+
 
     useEffect(() => {
         fetchConversations();
@@ -117,99 +122,80 @@ const ViewMessages = () => {
             <Typography variant="h4" gutterBottom>
                 Conversations
             </Typography>
-            <Button variant="contained" color="primary" onClick={() => handleStartConversation()} style={{ marginBottom: '20px' }}>
+            <Button variant="contained" color="primary" onClick={handleStartConversation} style={{ marginBottom: "20px" }}>
                 Start Conversation
             </Button>
             <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
+                {/** Conversation Selection **/}
+                <Grid item xs={12} md={3}>
                     <List>
                         {conversations.map((conversation, index) => (
-                            <React.Fragment key={conversation.id || index}>
+                            <React.Fragment key={index}>
                                 <ListItem button onClick={() => handleSelectConversation(conversation)}>
-                                    <ListItemText
-                                        primary={`Conversation ${index + 1}`}
-                                        secondary={
-                                            conversation.lastMessageId === "-1" ?
-                                                "No messages in this conversation." :
-                                                `Last message at ${new Date(conversation.lastTimestamp).toLocaleString()}: "${conversation.lastMessage}"`
-                                        }
-                                    />
+                                    <ListItemText primary={conversation.title} />
                                 </ListItem>
                                 <Divider component="li" />
                             </React.Fragment>
                         ))}
                     </List>
                 </Grid>
-                <Grid item xs={12} md={8}>
-                    {selectedConversation ? (
-                        <Box>
-                            <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="1rem">
-                                <Typography variant="h6">Messages</Typography>
-                                <Box>
-                                    {/* Participants Dropdown */}
-                                    <Select
-                                        label="Participants"
-                                        value=""
-                                        displayEmpty
-                                        renderValue={() => "Participants"}
-                                        onChange={() => {}}
-                                        variant="outlined"
-                                    >
-                                        {selectedConversation.participantIds.map((participant, index) => (
-                                            <MenuItem key={index} value={participant}>
-                                                {participant}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <Button variant="contained" color="secondary" onClick={handleLeaveConversation} style={{ marginLeft: '10px' }}>
-                                        Leave
-                                    </Button>
-                                </Box>
-                            </Box>
-                            {messages.length > 0 ? (
-                                <List>
-                                    {messages.map((message, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText
-                                                primary={message.text}
-                                                secondary={new Date(message.timestamp).toLocaleString() + ',' + message.senderId}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            ) : (
-                                <Typography>No messages in this conversation.</Typography>
-                            )}
-
-                            <Box>
+                {/** Selected Conversation Selection **/}
+                <Grid item xs={12} md={5}>
+                    {selectedConversation && (
+                        <>
+                            <Typography variant="h6">{`Conversation Details`}</Typography>
+                            <List>
+                                {messages.map((message, index) => (
+                                    <ListItem key={index}>
+                                        <ListItemText
+                                            primary={message.text}
+                                            secondary={new Date(message.timestamp).toLocaleString() + " | " + message.senderId}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
+                            <Box mt={2} display="flex" alignItems="center">
                                 <TextField
                                     fullWidth
                                     variant="outlined"
                                     placeholder="Type a message..."
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                            e.preventDefault();
-                                            handleSendMessage();
-                                        }
-                                    }}
                                     margin="normal"
                                 />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={()=> handleSendMessage()}
-                                    style={{ marginBottom: '20px' }}
-                                >
+                                <Button variant="contained" color="primary" onClick={handleSendMessage} style={{ margin: "10px", marginLeft: "10px" }}>
                                     Send
                                 </Button>
                             </Box>
-                        </Box>
-                    ) : (
-                        <Typography>Select a conversation to view messages.</Typography>
+                        </>
                     )}
                 </Grid>
+                {/** Participants of selected conversation **/}
+                {selectedConversation && (
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h6">Participants</Typography>
+                        <Box mt={2} display="flex" alignItems="center">
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                placeholder="Add user..."
+                                value={newParticipantUsername}
+                                onChange={(e) => setNewParticipantUsername(e.target.value)}
+                                margin="normal"
+                            />
+                            <Button variant="contained" color="primary" onClick={() => handleAddParticipant(newParticipantUsername)} style={{ marginLeft: "10px" }}>
+                                Add
+                            </Button>
+                        </Box>
+                        <List dense>
+                            {selectedConversation.participantIds.map((participant, index) => (
+                                <ListItem key={index}>
+                                    <ListItemText primary={`User ${participant}`} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Grid>
+                )}
             </Grid>
         </Container>
     );
