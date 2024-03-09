@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Container, Card, CardContent, Typography, TextField, Button, Box, Link } from "@mui/material";
-import axios from "axios";
 import {useNavigate} from 'react-router-dom'
-import axiosIntercept from "../../utils/axiosIntercept";
+import {login} from "../../utils/axiosUtil"
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -13,13 +12,9 @@ const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
-                username,
-                password
-            })
+            const response = await login(username, password)
 
-            if (response.data) {
-                localStorage.setItem('user', JSON.stringify(response.data))
+            if (response) {
                 navigate('/')
             }
         } catch (err) {

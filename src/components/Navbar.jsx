@@ -3,8 +3,8 @@ import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, Box, List, Lis
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import axiosIntercept from "../utils/axiosIntercept";
 import {useNavigate} from "react-router-dom";
+import {getLocalUser, logout} from "../utils/axiosUtil";
 
 const NavbarComponent = () => {
     const [open, setOpen] = useState(false);
@@ -23,35 +23,29 @@ const NavbarComponent = () => {
         e.preventDefault()
 
         try {
-            const response= axios.post("http://localhost:8080/api/auth/logout")
-
+            await logout()
             navigate("/")
-            localStorage.removeItem('user')
         } catch (error) {
             alert(error)
         }
     }
 
     const checkUser = async () => {
-        try {
-            const user = JSON.parse(localStorage.getItem('user'))
-            if (user) {
-                setLoggedIn(true)
-                setUsername(user.username)
-
-                if (/**user.roles.includes('ADMIN')**/true) {
-                    setAdmin(true)
-                }
-            }
-        } catch (err) {
-            alert(err)
+        const user = getLocalUser()
+        if (!user) {
+            setLoggedIn(false)
+            setUsername(null)
+            return
         }
+
+        setLoggedIn(true)
+        setUsername(user.username)
     }
 
     useEffect(() => {
         setOpen(false);
         checkUser()
-    }, [location]);
+    }, [username, location]);
 
     const drawerList = () => (
         <Box

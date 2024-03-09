@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
+import intercept from "../../utils/axiosUtil";
 
 const ViewMessages = () => {
     const [conversations, setConversations] = useState([]);
@@ -114,6 +115,16 @@ const ViewMessages = () => {
         }
     }
 
+    const handleDeleteMessage = async (messageId) => {
+        try {
+            await intercept.delete(`http://localhost:8080/api/message/${messageId}`);
+
+            setMessages(prevMessages => prevMessages.filter(message => message.id !== messageId));
+        } catch (err) {
+            console.error("Failed to delete message:", err.message);
+        }
+    };
+
     const handleLeaveConversation = async () => {
 
     }
@@ -152,7 +163,13 @@ const ViewMessages = () => {
                             <Typography variant="h6">{`Conversation Details`}</Typography>
                             <List>
                                 {messages.slice(0, displayedMessageLimit).map((message, index) => (
-                                    <ListItem key={index}>
+                                    <ListItem key={index} secondaryAction={
+                                        message.senderId === JSON.parse(localStorage.getItem('user')).id && (
+                                            <Button edge="end" onClick={() => handleDeleteMessage(message.id)}>
+                                                Delete
+                                            </Button>
+                                        )
+                                    }>
                                         <ListItemText
                                             primary={message.text}
                                             secondary={new Date(message.timestamp).toLocaleString() + " | " + message.senderId}
