@@ -21,6 +21,7 @@ const ViewMessages = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [newParticipantUsername, setNewParticipantUsername] = useState('')
+    const [displayedMessageLimit, setDisplayedMessageLimit] = useState(5);
     const navigate = useNavigate()
 
     const fetchConversations = async () => {
@@ -50,6 +51,10 @@ const ViewMessages = () => {
         }
     };
 
+    useEffect(() => {
+        fetchConversations()
+    },[])
+
     const handleStartConversation = async () => {
         try {
             const userStr = localStorage.getItem('user');
@@ -76,12 +81,18 @@ const ViewMessages = () => {
 
     const handleSelectConversation = async (conversation) => {
         setSelectedConversation(conversation);
+        setDisplayedMessageLimit(5)
         try {
             const res = await axios.get(`http://localhost:8080/api/conversation/${conversation.id}/messages`);
-            setMessages(res.data);
+            const sortedMessages = res.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            setMessages(sortedMessages);
         } catch (err) {
             console.error("Failed to fetch messages:", err.message);
         }
+    };
+
+    const handleLoadMoreMessages = () => {
+        setDisplayedMessageLimit(prevLimit => prevLimit + 5);
     };
 
     const handleSendMessage = async () => {
@@ -109,11 +120,6 @@ const ViewMessages = () => {
 
     const handleAddParticipant = async () => {
     }
-
-
-    useEffect(() => {
-        fetchConversations();
-    }, []);
 
     if (!conversations) return <Typography color="error">Loading conversations...</Typography>;
 
@@ -145,7 +151,7 @@ const ViewMessages = () => {
                         <>
                             <Typography variant="h6">{`Conversation Details`}</Typography>
                             <List>
-                                {messages.map((message, index) => (
+                                {messages.slice(0, displayedMessageLimit).map((message, index) => (
                                     <ListItem key={index}>
                                         <ListItemText
                                             primary={message.text}
@@ -154,6 +160,9 @@ const ViewMessages = () => {
                                     </ListItem>
                                 ))}
                             </List>
+                            {messages.length > displayedMessageLimit && (
+                                <Button onClick={handleLoadMoreMessages}>Load More</Button>
+                            )}
                             <Box mt={2} display="flex" alignItems="center">
                                 <TextField
                                     fullWidth
