@@ -10,7 +10,7 @@ import {
     Button,
     ListItem,
     List,
-    Divider, ListItemText, TextField
+    Divider, ListItemText, TextField, Select, MenuItem
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
@@ -33,6 +33,7 @@ const ViewMessages = () => {
                     if (lastMessageId) {
                         const res = await axios.get(`http://localhost:8080/api/message/${lastMessageId}`);
                         const message = res.data;
+
                         return {
                             ...conversation,
                             lastMessage: message.text,
@@ -100,6 +101,10 @@ const ViewMessages = () => {
         }
     }
 
+    const handleLeaveConversation = async () => {
+
+    }
+
 
     useEffect(() => {
         fetchConversations();
@@ -138,14 +143,36 @@ const ViewMessages = () => {
                 <Grid item xs={12} md={8}>
                     {selectedConversation ? (
                         <Box>
-                            <Typography variant="h6">Messages</Typography>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="1rem">
+                                <Typography variant="h6">Messages</Typography>
+                                <Box>
+                                    {/* Participants Dropdown */}
+                                    <Select
+                                        label="Participants"
+                                        value=""
+                                        displayEmpty
+                                        renderValue={() => "Participants"}
+                                        onChange={() => {}}
+                                        variant="outlined"
+                                    >
+                                        {selectedConversation.participantIds.map((participant, index) => (
+                                            <MenuItem key={index} value={participant}>
+                                                {participant}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    <Button variant="contained" color="secondary" onClick={handleLeaveConversation} style={{ marginLeft: '10px' }}>
+                                        Leave
+                                    </Button>
+                                </Box>
+                            </Box>
                             {messages.length > 0 ? (
                                 <List>
                                     {messages.map((message, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
                                                 primary={message.text}
-                                                secondary={new Date(message.timestamp).toLocaleString()}
+                                                secondary={new Date(message.timestamp).toLocaleString() + ',' + message.senderId}
                                             />
                                         </ListItem>
                                     ))}
