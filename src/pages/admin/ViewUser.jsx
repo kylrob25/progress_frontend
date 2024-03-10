@@ -27,28 +27,6 @@ const ViewUser = () => {
         fetchUser();
     }, [userId]);
 
-    const createTrainerProfile = async () => {
-        try {
-            await axios.post(`http://localhost:8080/api/trainer/`, {
-                "userId": userId,
-                "username": user.username,
-                "forename": user.forename,
-                "surname": user.surname,
-                "pictureUrl": "",
-                "cost": 0,
-                "location": "Unknown",
-                "specialization": "Unknown",
-                "clientIds" : []
-            });
-
-            alert('Trainer profile has been created and linked.');
-            fetchUser();
-        } catch (error) {
-            console.error("Error creating trainer profile:", error);
-            alert('Failed to create trainer profile.');
-        }
-    }
-
     if (!user) return <Typography color="error">Loading...</Typography>;
 
     return (
@@ -78,12 +56,6 @@ const ViewUser = () => {
                         )}
 
                         <Button as={Link} to={`/admin/edit-user/${userId}`} variant="primary">Edit User</Button>
-
-                        {trainer ? (
-                            <Button variant="primary" onClick={() => navigate(`/trainer/${trainer.username}`)}>View Trainer Profile</Button>
-                        ) : (
-                            <Button variant="secondary" onClick={() => createTrainerProfile()}>Create Trainer Profile</Button>
-                        )}
                     </CardContent>
                 </Card>
             </Grid>
