@@ -10,6 +10,7 @@ import ViewTrainers from "./pages/trainer/ViewTrainers";
 import CreateUser from "./pages/admin/CreateUser";
 import EditUser from "./pages/admin/EditUser";
 import ViewMessages from "./pages/profile/ViewMessages";
+import ViewDashboard from "./pages/profile/ViewDashboard"
 
 const App = () => {
     return (
@@ -29,6 +30,8 @@ const App = () => {
                     <Route path="/trainer/:username" element={<Trainer/>} />
 
                     <Route path="/messages" element={<ViewMessages/>} />
+
+                    <Route path="/dashboard" element={<ViewDashboard/>} />
 
                     <Route path="*" element={<NoPage />} />
                 </Route>

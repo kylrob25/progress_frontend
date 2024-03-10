@@ -10,11 +10,11 @@ import {
     Button,
     ListItem,
     List,
-    Divider, ListItemText, TextField, Select, MenuItem
+    Divider, ListItemText, TextField, Select, MenuItem, ListItemSecondaryAction
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
-import intercept from "../../utils/axiosUtil";
+import util from "../../utils/axiosUtil";
 
 const ViewMessages = () => {
     const [conversations, setConversations] = useState([]);
@@ -64,6 +64,7 @@ const ViewMessages = () => {
                 const response = await axios.post('http://localhost:8080/api/conversation', {
                     creatorId: user.id,
                     participantIds: [user.id],
+                    participantNames: [user.username],
                     messageIds: [],
                     lastMessageId: -1
                 });
@@ -117,7 +118,7 @@ const ViewMessages = () => {
 
     const handleDeleteMessage = async (messageId) => {
         try {
-            await intercept.delete(`http://localhost:8080/api/message/${messageId}`);
+            await util.delete(`http://localhost:8080/api/message/${messageId}`);
 
             setMessages(prevMessages => prevMessages.filter(message => message.id !== messageId));
         } catch (err) {
@@ -125,11 +126,25 @@ const ViewMessages = () => {
         }
     };
 
-    const handleLeaveConversation = async () => {
+    const handleLeaveConversation = async (conversationId) => {
 
     }
 
-    const handleAddParticipant = async () => {
+    const handleAddParticipant = async (username) => {
+        if (!selectedConversation || !username.trim()){
+            return
+        }
+
+        const conversationId = selectedConversation.id
+
+        try {
+            await util.put(`http://localhost:8080/api/conversation/${conversationId}/add`, {
+                username
+            })
+            setNewParticipantUsername('')
+        } catch (error){
+
+        }
     }
 
     if (!conversations) return <Typography color="error">Loading conversations...</Typography>;
@@ -150,6 +165,18 @@ const ViewMessages = () => {
                             <React.Fragment key={index}>
                                 <ListItem button onClick={() => handleSelectConversation(conversation)}>
                                     <ListItemText primary={conversation.title} />
+                                    <ListItemSecondaryAction>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleLeaveConversation(conversation.id);
+                                            }}
+                                        >
+                                            Leave
+                                        </Button>
+                                    </ListItemSecondaryAction>
                                 </ListItem>
                                 <Divider component="li" />
                             </React.Fragment>
@@ -157,7 +184,7 @@ const ViewMessages = () => {
                     </List>
                 </Grid>
                 {/** Selected Conversation Selection **/}
-                <Grid item xs={12} md={5}>
+                <Grid item xs={12} md={6}>
                     {selectedConversation && (
                         <>
                             <Typography variant="h6">{`Conversation Details`}</Typography>
@@ -198,7 +225,7 @@ const ViewMessages = () => {
                 </Grid>
                 {/** Participants of selected conversation **/}
                 {selectedConversation && (
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                         <Typography variant="h6">Participants</Typography>
                         <Box mt={2} display="flex" alignItems="center">
                             <TextField
@@ -214,9 +241,9 @@ const ViewMessages = () => {
                             </Button>
                         </Box>
                         <List dense>
-                            {selectedConversation.participantIds.map((participant, index) => (
+                            {selectedConversation.participantNames.map((participant, index) => (
                                 <ListItem key={index}>
-                                    <ListItemText primary={`User ${participant}`} />
+                                    <ListItemText primary={`${participant}`} />
                                 </ListItem>
                             ))}
                         </List>

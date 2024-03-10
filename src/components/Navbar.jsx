@@ -40,6 +40,8 @@ const NavbarComponent = () => {
 
         setLoggedIn(true)
         setUsername(user.username)
+
+        setAdmin(true)
     }
 
     useEffect(() => {
@@ -93,7 +95,7 @@ const NavbarComponent = () => {
 
                 {loggedIn ? (
                     <>
-                        <Button color="inherit" component={Link} to="/profile">{username}</Button>
+                        <Button color="inherit" component={Link} to="/dashboard">{username}</Button>
                         <Button color="inherit" component={Link} to="/messages">Messages</Button>
                         <Button color="inherit" onClick={(event) => handleLogout(event)}>Logout</Button>
                     </>

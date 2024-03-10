@@ -12,6 +12,7 @@ import {
     MenuItem, Checkbox, ListItemText, Button
 } from "@mui/material";
 import axios from "axios";
+import util from "../../utils/axiosUtil";
 
 const EditUser = () => {
     const { userId } = useParams();
@@ -66,6 +67,38 @@ const EditUser = () => {
         }));
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+
+        const addedRoles = user.roles.filter(role => !initialRoles.includes(role))
+        const removedRoles = initialRoles.filter(role => !user.roles.includes(role))
+
+        try {
+            await axios.put(`http://localhost:8080/api/user/${userId}`, user);
+        } catch (error){
+            console.log(error)
+        }
+
+        for (const role of addedRoles) {
+            try {
+                await util.put(`http://localhost:8080/api/user/${userId}/roles/${role}`)
+            } catch (error){
+                console.log(error)
+            }
+        }
+
+        for (const role of removedRoles) {
+            try {
+                await util.delete(`http://localhost:8080/api/user/${userId}/roles/${role}`)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        navigate(`/admin/view-user/${userId}`);
+    }
+
+    /*
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -89,6 +122,7 @@ const EditUser = () => {
             console.error("Error updating user:", error);
         }
     };
+     */
 
     return (
         <Grid container justifyContent="center">
@@ -102,7 +136,7 @@ const EditUser = () => {
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" color="danger" onClick={() => navigate(`/admin/view-user/${userId}`)}>
+                                <Button variant="contained" color="error" onClick={() => navigate(`/admin/view-user/${userId}`)}>
                                     Back
                                 </Button>
                             </Grid>
