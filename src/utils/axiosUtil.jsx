@@ -70,8 +70,17 @@ util.interceptors.response.use(
     async (error) => {
         const conf = error.config
 
+        if (conf.url !== "/auth/login" && error.response) {
+            if (error.response.status === 401) {
+                await logout().then(v => {
+                    window.location.href = "/";
+                })
+
+            }
+        }
+        /*const conf = error.config
+
         if (conf.url !== "/auth/login" && error.response){
-            console.log(error.response.status)
             if(error.response.status === 401 && !conf._retry){
                 conf._retry = true;
 
@@ -88,7 +97,7 @@ util.interceptors.response.use(
                 }
             }
         }
-        return Promise.reject(error)
+        return Promise.reject(error)*/
     }
 )
 
