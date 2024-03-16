@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {Link, useNavigate, useParams} from 'react-router-dom';
-import {Card, CardContent, Typography, Grid, Button} from "@mui/material";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
+import {Link, useParams} from 'react-router-dom';
+import {Button, Card, CardContent, Grid, Typography} from "@mui/material";
+import util from "../../utils/axiosUtil";
 
 const ViewUser = () => {
-    const navigate = useNavigate();
-    const { userId } = useParams();
+    const {userId} = useParams();
     const [user, setUser] = useState(null);
-    const [trainer, setTrainer] = useState(null);
 
     const fetchUser = async () => {
         try {
-            const userData = await axios.get(`http://localhost:8080/api/user/${userId}`);
-            setUser(userData.data);
-
-            if (userData.data.roles && userData.data.roles.includes('TRAINER')) {
-                const trainerData = await axios.get(`http://localhost:8080/api/trainer/username/${userData.data.username}`);
-                setTrainer(trainerData.data);
-            }
+            const response = await util.get(`http://localhost:8080/api/user/${userId}`);
+            setUser(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -55,7 +48,7 @@ const ViewUser = () => {
                             </Typography>
                         )}
 
-                        <Button as={Link} to={`/admin/edit-user/${userId}`} variant="primary">Edit User</Button>
+                        <Button as={Link} to={`/admin/user/edit/${userId}`} variant="primary">Edit User</Button>
                     </CardContent>
                 </Card>
             </Grid>

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, Box, List, ListItem, ListItemText } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useLocation } from "react-router-dom";
-import {useNavigate} from "react-router-dom";
-import {getLocalUser, logout} from "../utils/axiosUtil";
+import React, {useEffect, useState} from "react"
+import {AppBar, Box, Button, Drawer, IconButton, List, ListItem, ListItemText, Toolbar, Typography} from "@mui/material"
+import MenuIcon from '@mui/icons-material/Menu'
+import {Link, useLocation, useNavigate} from "react-router-dom"
+import {getLocalUser, logout} from "../utils/axiosUtil"
 
 const NavbarComponent = () => {
-    const [open, setOpen] = useState(false);
-    const location = useLocation();
+    const [open, setOpen] = useState(false)
+    const location = useLocation()
     const navigate = useNavigate()
 
     const [loggedIn, setLoggedIn] = useState(false)
@@ -50,20 +49,20 @@ const NavbarComponent = () => {
 
     const drawerList = () => (
         <Box
-            sx={{ width: 250 }}
+            sx={{width: 250}}
             role="presentation"
             onClick={() => setOpen(false)}
         >
             <List>
                 <ListItem button component={Link} to="/">
-                    <ListItemText primary="Home" />
+                    <ListItemText primary="Home"/>
                 </ListItem>
 
                 {
                     admin ? (
                         <>
-                            <ListItem button component={Link} to="/admin/view-users">
-                                <ListItemText primary="Users" />
+                            <ListItem button component={Link} to="/admin/users">
+                                <ListItemText primary="Users"/>
                             </ListItem>
                         </>
                     ) : (
@@ -83,12 +82,12 @@ const NavbarComponent = () => {
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    sx={{ mr: 2 }}
+                    sx={{mr: 2}}
                     onClick={handleToggle}
                 >
-                    <MenuIcon />
+                    <MenuIcon/>
                 </IconButton>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                     Progress
                 </Typography>
 

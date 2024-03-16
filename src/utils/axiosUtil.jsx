@@ -18,7 +18,7 @@ const sendLoginRequest = (username, password) => util.post("/auth/login", {
     password: password
 })
 
-const sendRefreshRequest = () => util.post("/auth/refresh",{
+const sendRefreshRequest = () => util.post("/auth/refresh", {
     refreshToken: getRefreshToken()
 })
 
@@ -33,7 +33,7 @@ const setLocalUser = (response) => {
     return user;
 };
 
-const login = async(username, password) => {
+const login = async (username, password) => {
     try {
         const request = await sendLoginRequest(username, password)
         const response = request.data
@@ -41,12 +41,12 @@ const login = async(username, password) => {
         localStorage.setItem('token', response.token)
         localStorage.setItem('refreshToken', response.refreshToken)
         return setLocalUser(response)
-    } catch (error){
+    } catch (error) {
         throw error
     }
 }
 
-const logout = async() => {
+const logout = async () => {
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
@@ -55,7 +55,7 @@ const logout = async() => {
 util.interceptors.request.use(
     (config) => {
         const token = getToken()
-        if(token){
+        if (token) {
             config.headers["Authorization"] = 'Bearer ' + token
         }
         return config
@@ -66,7 +66,7 @@ util.interceptors.request.use(
 )
 
 util.interceptors.response.use(
-    res=> res,
+    res => res,
     async (error) => {
         const conf = error.config
 

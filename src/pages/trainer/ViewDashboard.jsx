@@ -42,22 +42,22 @@ const ViewDashboard = () => {
         try {
             const user = getLocalUser()
 
-            if (user.roles.includes("TRAINER")){
+            if (user.roles.includes("TRAINER")) {
                 fetchTrainer()
                 return
             }
 
             navigate("/profile/dashboard")
-        } catch (error){
+        } catch (error) {
             console.log(error)
         }
     }
 
-    const fetchTrainer = async () =>{
+    const fetchTrainer = async () => {
         const user = getLocalUser()
         try {
             const response = await util.get(`http://localhost:8080/api/trainer/userId/${user.id}`)
-            if(response) {
+            if (response) {
                 setTrainer(response.data)
 
                 setTrainerCost(response.data.cost);
@@ -67,7 +67,7 @@ const ViewDashboard = () => {
                 fetchRequests(response.data.id)
                 fetchClients(response.data.id)
             }
-        } catch (error){
+        } catch (error) {
             console.log(error)
         }
     }
@@ -76,7 +76,7 @@ const ViewDashboard = () => {
         try {
             const response = await util.get(`http://localhost:8080/api/trainer/${trainerId}/clients`)
             setClients(response.data)
-        } catch (error){
+        } catch (error) {
             console.log(error)
         }
     }
@@ -118,8 +118,8 @@ const ViewDashboard = () => {
     }, [])
 
     return (
-        <Box sx={{ padding: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Box sx={{padding: 3}}>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2}}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Dashboard
                 </Typography>
@@ -136,7 +136,7 @@ const ViewDashboard = () => {
                             <Typography variant="body1">Cost: {trainerCost}</Typography>
                             <Typography variant="body1">Location: {trainerLocation}</Typography>
                             <Typography variant="body1">Specialization: {trainerSpecialization}</Typography>
-                            <Button variant="contained" onClick={toggleEditForm} sx={{ mt: 2 }}>
+                            <Button variant="contained" onClick={toggleEditForm} sx={{mt: 2}}>
                                 Edit Your Details
                             </Button>
                         </Box>
@@ -188,7 +188,7 @@ const ViewDashboard = () => {
                     </Grid>
 
                     {clients.length > 0 ? (
-                        <List sx={{ mt: 2 }}>
+                        <List sx={{mt: 2}}>
                             {clients.map((client, index) => (
                                 <ListItem
                                     key={client.userId}
@@ -201,19 +201,19 @@ const ViewDashboard = () => {
                                         </Button>
                                     }
                                 >
-                                    <ListItemText primary={client.username} />
+                                    <ListItemText primary={client.username}/>
                                 </ListItem>
                             ))}
                         </List>
                     ) : (
-                        <Typography variant="body1" sx={{ mt: 2 }}>You currently have no clients.</Typography>
+                        <Typography variant="body1" sx={{mt: 2}}>You currently have no clients.</Typography>
                     )}
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
                     <Typography variant="h6">Requests</Typography>
                     {requests.length > 0 ? (
-                        <List sx={{ mt: 2 }}>
+                        <List sx={{mt: 2}}>
                             {requests.map((request) => (
                                 <ListItem
                                     key={request.userId}
@@ -222,7 +222,7 @@ const ViewDashboard = () => {
                                             <Button
                                                 variant="contained"
                                                 color="success"
-                                                sx={{ mr: 1 }}
+                                                sx={{mr: 1}}
                                                 onClick={() => acceptRequest(trainer.id, request.userId)}
                                             >
                                                 Accept
@@ -237,12 +237,12 @@ const ViewDashboard = () => {
                                         </Box>
                                     }
                                 >
-                                    <ListItemText primary={request.username} />
+                                    <ListItemText primary={request.username}/>
                                 </ListItem>
                             ))}
                         </List>
                     ) : (
-                        <Typography variant="body1" sx={{ mt: 2 }}>No requests at the moment.</Typography>
+                        <Typography variant="body1" sx={{mt: 2}}>No requests at the moment.</Typography>
                     )}
                 </Grid>
             </Grid>

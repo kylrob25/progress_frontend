@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-    Grid,
-    Card,
-    CardContent,
-    CardActions,
     Button,
-    Typography,
+    Card,
+    CardActions,
+    CardContent,
     CardMedia,
-    TextField,
     Container,
+    Grid,
+    TextField,
+    Typography,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from "axios";
 
 const ViewTrainers = () => {
     const [trainers, setTrainers] = useState([]);
     const [filteredTrainers, setFilteredTrainers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [error, setError] = useState("");
 
     const fetchTrainers = async () => {
         try {
@@ -26,7 +25,6 @@ const ViewTrainers = () => {
             setFilteredTrainers(response.data);
         } catch (err) {
             console.log(err.message);
-            setError("Failed to fetch trainers. Please try again later.");
         }
     };
 
@@ -41,24 +39,22 @@ const ViewTrainers = () => {
         setFilteredTrainers(results);
     }, [searchTerm, trainers]);
 
-    if (error) return <Typography color="error">{error}</Typography>;
-
     return (
-        <Container maxWidth="lg" style={{ marginTop: '20px', marginBottom: '20px' }}>
+        <Container maxWidth="lg" style={{marginTop: '20px', marginBottom: '20px'}}>
             <TextField
                 label="Search"
                 fullWidth
                 margin="dense"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ marginBottom: '20px' }}
+                style={{marginBottom: '20px'}}
             />
 
             <Grid container spacing={3}>
                 {filteredTrainers.length > 0 ? (
                     filteredTrainers.map((trainer) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={trainer.id}>
-                            <Card style={{ width: '100%', height: '100%' }}>
+                            <Card style={{width: '100%', height: '100%'}}>
                                 <CardMedia
                                     component="img"
                                     height="150"
@@ -69,7 +65,8 @@ const ViewTrainers = () => {
                                     <Typography variant="h6">{trainer.username}</Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button component={Link} to={`/trainer/${trainer.username}`} variant="contained" color="primary">
+                                    <Button component={Link} to={`/trainer/${trainer.username}`} variant="contained"
+                                            color="primary">
                                         View
                                     </Button>
                                 </CardActions>

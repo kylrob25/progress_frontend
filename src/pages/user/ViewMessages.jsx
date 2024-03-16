@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-    Card,
-    CardContent,
-    Typography,
-    Grid,
-    CardMedia,
-    Container,
     Box,
     Button,
-    ListItem,
+    Container,
+    Divider,
+    Grid,
     List,
-    Divider, ListItemText, TextField, Select, MenuItem, ListItemSecondaryAction
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    TextField,
+    Typography
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
@@ -33,6 +33,7 @@ const ViewMessages = () => {
             return
         }
 
+        // TODO: Handle via a single request
         try {
             const response = await axios.get(`http://localhost:8080/api/conversation/user/${user.id}`);
             const conversationsWithLastMessage = await Promise.all(response.data.map(async (conversation) => {
@@ -57,7 +58,7 @@ const ViewMessages = () => {
 
     useEffect(() => {
         fetchConversations()
-    },[])
+    }, [])
 
     const handleStartConversation = async () => {
         const user = getLocalUser()
@@ -75,7 +76,8 @@ const ViewMessages = () => {
                 messageIds: [],
                 lastMessageId: -1
             });
-            if (response) fetchConversations();
+
+            fetchConversations();
         } catch (err) {
             console.error("Failed to create conversation:", err.message);
         }
@@ -156,7 +158,7 @@ const ViewMessages = () => {
     }
 
     const handleAddParticipant = async (username) => {
-        if (!selectedConversation || !username.trim()){
+        if (!selectedConversation || !username.trim()) {
             return
         }
 
@@ -167,7 +169,7 @@ const ViewMessages = () => {
                 username
             })
             setNewParticipantUsername('')
-        } catch (error){
+        } catch (error) {
             console.log(error)
         }
     }
@@ -179,17 +181,17 @@ const ViewMessages = () => {
             <Typography variant="h4" gutterBottom>
                 Conversations
             </Typography>
-            <Button variant="contained" color="primary" onClick={handleStartConversation} style={{ marginBottom: "20px" }}>
+            <Button variant="contained" color="primary" onClick={handleStartConversation}
+                    style={{marginBottom: "20px"}}>
                 Start Conversation
             </Button>
             <Grid container spacing={2}>
-                {/** Conversation Selection **/}
                 <Grid item xs={12} md={3}>
                     <List>
                         {conversations.map((conversation, index) => (
                             <React.Fragment key={index}>
                                 <ListItem button onClick={() => handleSelectConversation(conversation)}>
-                                    <ListItemText primary={conversation.title} />
+                                    <ListItemText primary={conversation.title}/>
                                     <ListItemSecondaryAction>
                                         <Button
                                             variant="contained"
@@ -203,12 +205,12 @@ const ViewMessages = () => {
                                         </Button>
                                     </ListItemSecondaryAction>
                                 </ListItem>
-                                <Divider component="li" />
+                                <Divider component="li"/>
                             </React.Fragment>
                         ))}
                     </List>
                 </Grid>
-                {/** Selected Conversation Selection **/}
+
                 <Grid item xs={12} md={6}>
                     {selectedConversation && (
                         <>
@@ -241,14 +243,15 @@ const ViewMessages = () => {
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     margin="normal"
                                 />
-                                <Button variant="contained" color="primary" onClick={handleSendMessage} style={{ margin: "10px", marginLeft: "10px" }}>
+                                <Button variant="contained" color="primary" onClick={handleSendMessage}
+                                        style={{margin: "10px", marginLeft: "10px"}}>
                                     Send
                                 </Button>
                             </Box>
                         </>
                     )}
                 </Grid>
-                {/** Participants of selected conversation **/}
+
                 {selectedConversation && (
                     <Grid item xs={12} md={3}>
                         <Typography variant="h6">Participants</Typography>
@@ -261,14 +264,16 @@ const ViewMessages = () => {
                                 onChange={(e) => setNewParticipantUsername(e.target.value)}
                                 margin="normal"
                             />
-                            <Button variant="contained" color="primary" onClick={() => handleAddParticipant(newParticipantUsername)} style={{ marginLeft: "10px" }}>
+                            <Button variant="contained" color="primary"
+                                    onClick={() => handleAddParticipant(newParticipantUsername)}
+                                    style={{marginLeft: "10px"}}>
                                 Add
                             </Button>
                         </Box>
                         <List dense>
                             {selectedConversation.participantNames.map((participant, index) => (
                                 <ListItem key={index}>
-                                    <ListItemText primary={`${participant}`} />
+                                    <ListItemText primary={`${participant}`}/>
                                 </ListItem>
                             ))}
                         </List>

@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from 'react-router-dom';
 import {
+    Button,
     Card,
     CardContent,
-    Typography,
-    Grid,
-    TextField,
+    Checkbox,
     FormControl,
+    Grid,
     InputLabel,
+    ListItemText,
+    MenuItem,
     Select,
-    MenuItem, Checkbox, ListItemText, Button
+    TextField,
+    Typography
 } from "@mui/material";
-import axios from "axios";
 import util from "../../utils/axiosUtil";
 
 const EditUser = () => {
-    const { userId } = useParams();
+    const {userId} = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState({
         username: '',
@@ -29,7 +31,7 @@ const EditUser = () => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+            const response = await util.get(`http://localhost:8080/api/user/${userId}`);
             setUser(response.data);
             setInitialRoles([...response.data.roles]);
         } catch (error) {
@@ -39,7 +41,7 @@ const EditUser = () => {
 
     const fetchRoles = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/roles`);
+            const response = await util.get(`http://localhost:8080/api/roles`);
             setAllRoles(response.data);
         } catch (error) {
             console.error("Error fetching roles:", error);
@@ -52,7 +54,7 @@ const EditUser = () => {
     }, [userId]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setUser(prevState => ({
             ...prevState,
             [name]: value
@@ -74,15 +76,15 @@ const EditUser = () => {
         const removedRoles = initialRoles.filter(role => !user.roles.includes(role))
 
         try {
-            await axios.put(`http://localhost:8080/api/user/${userId}`, user);
-        } catch (error){
+            await util.put(`http://localhost:8080/api/user/${userId}`, user);
+        } catch (error) {
             console.log(error)
         }
 
         for (const role of addedRoles) {
             try {
                 await util.put(`http://localhost:8080/api/user/${userId}/roles/${role}`)
-            } catch (error){
+            } catch (error) {
                 console.log(error)
             }
         }
@@ -95,7 +97,7 @@ const EditUser = () => {
             }
         }
 
-        navigate(`/admin/view-user/${userId}`);
+        navigate(`/admin/user/${userId}`);
     }
 
     return (
@@ -110,7 +112,8 @@ const EditUser = () => {
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" color="error" onClick={() => navigate(`/admin/view-user/${userId}`)}>
+                                <Button variant="contained" color="error"
+                                        onClick={() => navigate(`/admin/user/${userId}`)}>
                                     Back
                                 </Button>
                             </Grid>
@@ -173,8 +176,8 @@ const EditUser = () => {
                                 >
                                     {allRoles.map((role) => (
                                         <MenuItem key={role} value={role}>
-                                            <Checkbox checked={user.roles.indexOf(role) > -1} />
-                                            <ListItemText primary={role} />
+                                            <Checkbox checked={user.roles.indexOf(role) > -1}/>
+                                            <ListItemText primary={role}/>
                                         </MenuItem>
                                     ))}
                                 </Select>

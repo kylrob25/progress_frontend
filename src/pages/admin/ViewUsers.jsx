@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from 'react-router-dom';
-import axios from "axios";
-import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Paper } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Link as RouterLink} from 'react-router-dom';
+import {
+    Button,
+    Container,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography
+} from "@mui/material";
+import util from "../../utils/axiosUtil";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -9,7 +20,7 @@ const ViewUsers = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/user');
+            const response = await util.get('http://localhost:8080/api/user');
             setUsers(response.data);
         } catch (err) {
             console.log(err.message);
@@ -18,15 +29,14 @@ const ViewUsers = () => {
     };
 
     const deleteUser = (userId) => {
-        axios.delete(`http://localhost:8080/api/user/${userId}`)
-            .then(() => {
-                alert(`Deleted user: ${userId}`);
-                fetchUsers();
-            })
-            .catch((error) => {
-                console.error("Failed to delete user:", error);
-                alert('Failed to delete user.');
-            });
+        try {
+            util.delete(`http://localhost:8080/api/user/${userId}`)
+            alert("Deleted user.")
+            fetchUsers()
+        } catch (error) {
+            console.log("Failed to delete user:", error)
+            alert("Failed to delete user.")
+        }
     };
 
     useEffect(() => {
@@ -36,13 +46,13 @@ const ViewUsers = () => {
     if (error) return <Typography color="error">{error}</Typography>;
 
     return (
-        <Container maxWidth="lg" sx={{ marginTop: '20px', marginBottom: '20px' }}>
+        <Container maxWidth="lg" sx={{marginTop: '20px', marginBottom: '20px'}}>
             <Button
                 component={RouterLink}
-                to="/admin/create-user"
+                to="/admin/user/create"
                 variant="contained"
                 color="primary"
-                sx={{ marginBottom: '20px' }}>
+                sx={{marginBottom: '20px'}}>
                 Create
             </Button>
             <TableContainer component={Paper}>
@@ -64,8 +74,10 @@ const ViewUsers = () => {
                                 <TableCell>{user.surname}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>
-                                    <Button component={RouterLink} to={`/admin/view-user/${user.id}`} variant="contained" color="primary" sx={{ marginRight: '8px' }}>View</Button>
-                                    <Button variant="contained" color="error" onClick={() => deleteUser(user.id)}>Delete</Button>
+                                    <Button component={RouterLink} to={`/admin/user/${user.id}`} variant="contained"
+                                            color="primary" sx={{marginRight: '8px'}}>View</Button>
+                                    <Button variant="contained" color="error"
+                                            onClick={() => deleteUser(user.id)}>Delete</Button>
                                 </TableCell>
                             </TableRow>
                         ))}

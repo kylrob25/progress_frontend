@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
-import {Card, CardContent, Typography, Grid, CardMedia, Container, Box, Button} from "@mui/material";
-import {useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from 'react-router-dom';
+import {Box, Button, Card, CardMedia, Container, Grid, Typography} from "@mui/material";
 import util, {getLocalUser} from "../../utils/axiosUtil";
 import axios from "axios";
 
 const ViewTrainer = () => {
-    const { username } = useParams();
+    const {username} = useParams();
     const [trainer, setTrainer] = useState(null);
     const navigate = useNavigate()
 
-    const fetchUser = async() => {
+    const fetchUser = async () => {
         try {
             const trainerData = await util.get(`http://localhost:8080/api/trainer/username/${username}`)
             setTrainer(trainerData.data);
@@ -19,9 +18,9 @@ const ViewTrainer = () => {
         }
     }
 
-    const handleContactButton = async() => {
+    const handleContactButton = async () => {
         const user = getLocalUser()
-        if (!user){
+        if (!user) {
             navigate("/login")
             return
         }
@@ -40,7 +39,7 @@ const ViewTrainer = () => {
                 lastMessageId: -1
             });
 
-            if (response){
+            if (response) {
                 navigate("/messages")
             }
         } catch (error) {
@@ -48,7 +47,7 @@ const ViewTrainer = () => {
         }
     }
 
-    const handleRequestButton = async() => {
+    const handleRequestButton = async () => {
         const user = getLocalUser()
 
         if (user.id === trainer.userId) {
@@ -71,11 +70,11 @@ const ViewTrainer = () => {
     if (!trainer) return <Typography color="error">Loading...</Typography>;
 
     return (
-        <Container sx={{ mt: 8, padding: '20px' }}>
-            <Grid container justifyContent="center" sx={{ maxWidth: '100%', margin: '0 auto' }}>
+        <Container sx={{mt: 8, padding: '20px'}}>
+            <Grid container justifyContent="center" sx={{maxWidth: '100%', margin: '0 auto'}}>
                 <Grid item xs={12} md={8} lg={6}>
                     <Card>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2 }}>
+                        <Box sx={{display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2}}>
                             <Box sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -95,7 +94,7 @@ const ViewTrainer = () => {
                                         image={trainer.pictureUrl}
                                         alt={trainer.username}
                                     />
-                                    <Typography variant="h6" sx={{ mt: 1 }}>
+                                    <Typography variant="h6" sx={{mt: 1}}>
                                         {trainer.username}
                                     </Typography>
                                 </Box>
@@ -116,7 +115,7 @@ const ViewTrainer = () => {
                                 </Box>
                             </Box>
 
-                            <Box sx={{ alignSelf: 'start' }}>
+                            <Box sx={{alignSelf: 'start'}}>
                                 <Button variant="contained" color="primary" onClick={handleContactButton}>
                                     Contact
                                 </Button>

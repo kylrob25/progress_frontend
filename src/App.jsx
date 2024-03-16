@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import ViewUsers from "./pages/admin/ViewUsers";
 import NoPage from "./pages/NoPage";
 import Layout from "./pages/Layout";
@@ -17,25 +17,25 @@ const App = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<ViewTrainers />} />
+                <Route path="/" element={<Layout/>}>
+                    <Route index element={<ViewTrainers/>}/>
 
-                    <Route path="/admin/view-users" element={<ViewUsers />} />
-                    <Route path="/admin/view-user/:userId" element={<ViewUser />} />
-                    <Route path="/admin/create-user" element={<CreateUser/>} />
-                    <Route path="/admin/edit-user/:userId" element={<EditUser/>} />
+                    <Route path="/admin/users" element={<ViewUsers/>}/>
+                    <Route path="/admin/user/:userId" element={<ViewUser/>}/>
+                    <Route path="/admin/user/create" element={<CreateUser/>}/>
+                    <Route path="/admin/user/edit/:userId" element={<EditUser/>}/>
 
-                    <Route path="/register" element={<Register/>} />
-                    <Route path="/login" element={<Login/>} />
+                    <Route path="/register" element={<Register/>}/>
+                    <Route path="/login" element={<Login/>}/>
 
-                    <Route path="/trainer/:username" element={<Trainer/>} />
+                    <Route path="/trainer/:username" element={<Trainer/>}/>
 
-                    <Route path="/profile/messages" element={<ViewMessages/>} />
-                    <Route path="/profile/dashboard" element={<ViewUserDashboard/>} />
+                    <Route path="/profile/messages" element={<ViewMessages/>}/>
+                    <Route path="/profile/dashboard" element={<ViewUserDashboard/>}/>
 
-                    <Route path="/trainer/dashboard" element={<ViewDashboard/>} />
+                    <Route path="/trainer/dashboard" element={<ViewDashboard/>}/>
 
-                    <Route path="*" element={<NoPage />} />
+                    <Route path="*" element={<NoPage/>}/>
                 </Route>
             </Routes>
         </BrowserRouter>
