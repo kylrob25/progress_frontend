@@ -1,9 +1,10 @@
-import {useEffect} from "react";
-import {getLocalUser} from "../../utils/axiosUtil";
+import {useEffect, useState} from "react";
+import util, {getLocalUser} from "../../utils/axiosUtil";
 import {useNavigate} from "react-router-dom";
 
 const ViewUserDashboard = () => {
     const navigate = useNavigate()
+    const [client, setClient] = useState(null)
 
     const fetchUser = async () => {
         const user = getLocalUser()
@@ -14,10 +15,15 @@ const ViewUserDashboard = () => {
         }
 
         try {
-            // TODO:
+            const response = await util.get(`http://localhost:8080/api/client/userid/${user.id}`)
+            setClient(response.data)
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const fetchPayments = async () => {
+        // TODO:
     }
 
     useEffect(() => {
