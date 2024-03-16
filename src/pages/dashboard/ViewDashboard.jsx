@@ -126,6 +126,10 @@ const ViewDashboard = () => {
         }
     }
 
+    const handleManageClient = async (trainerId, clientId) => {
+
+    }
+
     useEffect(() => {
         fetchUser()
     }, [])
@@ -202,13 +206,18 @@ const ViewDashboard = () => {
                         </Grid>
                     )}
                     {trainer && clients.length > 0 ? (
-                        <List component="nav" sx={{ mt: 2 }}>
+                        <List sx={{ mt: 2 }}>
                             {clients.map((client, index) => (
                                 <ListItem
-                                    button
-                                    key={client.id}
-                                    selected={selectedClient?.id === client.id}
-                                    onClick={() => setSelectedClient(client)}
+                                    key={client.userId}
+                                    secondaryAction={
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => handleManageClient(trainer.id, client.id)}
+                                        >
+                                            Manage
+                                        </Button>
+                                    }
                                 >
                                     <ListItemText primary={client.username} />
                                 </ListItem>
