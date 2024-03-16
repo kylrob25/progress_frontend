@@ -7,6 +7,8 @@ const ViewDashboard = () => {
     const navigate = useNavigate()
     const [trainer, setTrainer] = useState(null)
     const [username, setUsername] = useState('')
+    const [client, setClient] = useState(null)
+
     const [clients, setClients] = useState([])
     const [selectedClient, setSelectedClient] = useState(null)
 
@@ -39,6 +41,11 @@ const ViewDashboard = () => {
             if (user.roles.includes("TRAINER")){
                 fetchTrainer()
             }
+
+            if (user.roles.includes("CLIENT")) {
+                fetchClient()
+            }
+
         } catch (error){
             console.log(error)
         }
@@ -53,7 +60,21 @@ const ViewDashboard = () => {
             setTrainerCost(response.data.cost);
             setTrainerLocation(response.data.location);
             setTrainerSpecialization(response.data.specialization);
+
+            fetchClients()
         } catch (error){
+            console.log(error)
+        }
+    }
+
+    const fetchClient = async () => {
+        const user = getLocalUser()
+        try {
+            const response = await util.get(`http://localhost:8080/api/client/userId/${user.id}`)
+            if(response){
+                setClient(response.data)
+            }
+        } catch (error) {
             console.log(error)
         }
     }
@@ -174,24 +195,6 @@ const ViewDashboard = () => {
                         <Grid container justifyContent="space-between" alignItems="center">
                             <Grid item>
                                 <Typography variant="h6">Clients</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Grid container spacing={1} alignItems="center">
-                                    <Grid item>
-                                        <TextField
-                                            label="Invite Client"
-                                            variant="outlined"
-                                            size="small"
-                                            value={inviteUsername}
-                                            onChange={(e) => setInviteUsername(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <Button variant="contained" onClick={handleInvite} size="small">
-                                            Invite Client
-                                        </Button>
-                                    </Grid>
-                                </Grid>
                             </Grid>
                         </Grid>
                     )}

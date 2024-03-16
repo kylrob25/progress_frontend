@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom'
-import util from "../../utils/axiosUtil";
+import util, {getLocalUser} from "../../utils/axiosUtil";
 
 const ViewMessages = () => {
     const [conversations, setConversations] = useState([]);
@@ -26,27 +26,30 @@ const ViewMessages = () => {
     const navigate = useNavigate()
 
     const fetchConversations = async () => {
-        try {
-            const userStr = localStorage.getItem('user');
-            if (userStr) {
-                const user = JSON.parse(userStr);
-                const response = await axios.get(`http://localhost:8080/api/conversation/user/${user.id}`);
-                const conversationsWithLastMessage = await Promise.all(response.data.map(async (conversation) => {
-                    const lastMessageId = conversation.messageIds[conversation.messageIds.length - 1];
-                    if (lastMessageId) {
-                        const res = await axios.get(`http://localhost:8080/api/message/${lastMessageId}`);
-                        const message = res.data;
+        const user = getLocalUser();
 
-                        return {
-                            ...conversation,
-                            lastMessage: message.text,
-                            lastTimestamp: message.timestamp
-                        };
-                    }
-                    return conversation
-                }));
-                setConversations(conversationsWithLastMessage);
-            }
+        if (!user) {
+            navigate("/login")
+            return
+        }
+
+        try {
+            const response = await axios.get(`http://localhost:8080/api/conversation/user/${user.id}`);
+            const conversationsWithLastMessage = await Promise.all(response.data.map(async (conversation) => {
+                const lastMessageId = conversation.messageIds[conversation.messageIds.length - 1];
+                if (lastMessageId) {
+                    const res = await axios.get(`http://localhost:8080/api/message/${lastMessageId}`);
+                    const message = res.data;
+
+                    return {
+                        ...conversation,
+                        lastMessage: message.text,
+                        lastTimestamp: message.timestamp
+                    };
+                }
+                return conversation
+            }));
+            setConversations(conversationsWithLastMessage);
         } catch (err) {
             console.error("Failed to fetch conversations:", err.message);
         }
@@ -57,25 +60,22 @@ const ViewMessages = () => {
     },[])
 
     const handleStartConversation = async () => {
+        const user = getLocalUser()
+
+        if (!user) {
+            navigate("/login")
+            return
+        }
+
         try {
-            const userStr = localStorage.getItem('user');
-            if (userStr) {
-                const user = JSON.parse(userStr);
-                const response = await axios.post('http://localhost:8080/api/conversation', {
-                    creatorId: user.id,
-                    participantIds: [user.id],
-                    participantNames: [user.username],
-                    messageIds: [],
-                    lastMessageId: -1
-                });
-                const conversation = response.data
-                await axios.put(`http://localhost:8080/api/user/${user.id}/conversation`, conversation.id, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
-                fetchConversations();
-            }
+            const response = await axios.post('http://localhost:8080/api/conversation', {
+                creatorId: user.id,
+                participantIds: [user.id],
+                participantNames: [user.username],
+                messageIds: [],
+                lastMessageId: -1
+            });
+            if (response) fetchConversations();
         } catch (err) {
             console.error("Failed to create conversation:", err.message);
         }
@@ -98,16 +98,22 @@ const ViewMessages = () => {
     };
 
     const handleSendMessage = async () => {
-        if (!newMessage.trim()) return;
+        if (!newMessage.trim()) return
+
+        const user = getLocalUser()
+
+        if (!user) {
+            navigate("/login")
+            return;
+        }
+
         try {
-            const userStr = localStorage.getItem('user');
-            const user = JSON.parse(userStr);
-            const res = await axios.post(`http://localhost:8080/api/message`, {
+            const response = await axios.post(`http://localhost:8080/api/message`, {
                 conversationId: selectedConversation.id,
                 senderId: user.id,
                 text: newMessage,
             });
-            const sentMessage = res.data;
+            const sentMessage = response.data;
 
             setMessages([...messages, sentMessage]);
             setNewMessage('');
@@ -117,6 +123,13 @@ const ViewMessages = () => {
     }
 
     const handleDeleteMessage = async (messageId) => {
+        const user = getLocalUser()
+
+        if (!user) {
+            navigate("/login")
+            return
+        }
+
         try {
             await util.delete(`http://localhost:8080/api/message/${messageId}`);
 
@@ -127,7 +140,19 @@ const ViewMessages = () => {
     };
 
     const handleLeaveConversation = async (conversationId) => {
+        const user = getLocalUser()
 
+        if (!user) {
+            navigate("/login")
+            return
+        }
+
+        try {
+            await util.delete(`http://localhost:8080/api/conversation/${conversationId}/leave/${user.id}`)
+            fetchConversations()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const handleAddParticipant = async (username) => {
@@ -143,7 +168,7 @@ const ViewMessages = () => {
             })
             setNewParticipantUsername('')
         } catch (error){
-
+            console.log(error)
         }
     }
 

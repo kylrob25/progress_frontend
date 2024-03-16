@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, Box, List, ListItem, ListItemText } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {getLocalUser, logout} from "../utils/axiosUtil";
 

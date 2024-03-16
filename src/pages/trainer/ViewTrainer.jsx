@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import {Card, CardContent, Typography, Grid, CardMedia, Container, Box, Button} from "@mui/material";
-import axios from "axios";
 import {useNavigate} from 'react-router-dom'
-import ViewUser from "../admin/ViewUser";
+import util, {getLocalUser} from "../../utils/axiosUtil";
+import axios from "axios";
 
 const ViewTrainer = () => {
     const { username } = useParams();
@@ -12,25 +12,56 @@ const ViewTrainer = () => {
 
     const fetchUser = async() => {
         try {
-            const trainerData = await axios.get(`http://localhost:8080/api/trainer/username/${username}`)
+            const trainerData = await util.get(`http://localhost:8080/api/trainer/username/${username}`)
             setTrainer(trainerData.data);
-            alert(trainer.pictureUrl)
-        }catch (err) {
+        } catch (err) {
             console.log(err.message);
         }
-    };
+    }
 
-    const handleContactButton = async(e) => {
-        e.preventDefault()
-
-        const user = localStorage.getItem('user')
-
+    const handleContactButton = async() => {
+        const user = getLocalUser()
         if (!user){
             navigate("/login")
+            return
         }
 
-        //TODO: Run refresh token
-        //TODO: Start conversation
+        if (user.id === trainer.userId) {
+            alert("Cannot start conversation with yourself.")
+            return
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/conversation', {
+                creatorId: user.id,
+                participantIds: [user.id, trainer.userId],
+                participantNames: [user.username, trainer.username],
+                messageIds: [],
+                lastMessageId: -1
+            });
+
+            if (response){
+                navigate("/messages")
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleRequestButton = async() => {
+        const user = getLocalUser()
+
+        if (user.id === trainer.userId) {
+            alert("You can't train yourself..")
+            return
+        }
+
+        try {
+            await util.put(`http://localhost:8080/api/trainer/${trainer.id}/requests/${user.id}`)
+            alert("Sent training request.")
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     useEffect(() => {
@@ -86,8 +117,11 @@ const ViewTrainer = () => {
                             </Box>
 
                             <Box sx={{ alignSelf: 'start' }}>
-                                <Button variant="contained" color="primary" onClick={(event) => handleContactButton(event)}>
+                                <Button variant="contained" color="primary" onClick={handleContactButton}>
                                     Contact
+                                </Button>
+                                <Button variant="contained" color="primary" onClick={handleRequestButton}>
+                                    Request
                                 </Button>
                             </Box>
                         </Box>

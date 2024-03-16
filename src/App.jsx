@@ -10,7 +10,7 @@ import ViewTrainers from "./pages/trainer/ViewTrainers";
 import CreateUser from "./pages/admin/CreateUser";
 import EditUser from "./pages/admin/EditUser";
 import ViewMessages from "./pages/profile/ViewMessages";
-import ViewDashboard from "./pages/profile/ViewDashboard"
+import ViewDashboard from "./pages/dashboard/ViewDashboard"
 
 const App = () => {
     return (

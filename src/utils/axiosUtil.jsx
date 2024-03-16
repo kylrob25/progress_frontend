@@ -6,7 +6,7 @@ const util = axios.create({
 
 const getLocalUser = () => {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null; // Assuming user is stored as a JSON string
+    return user ? JSON.parse(user) : null;
 };
 
 const getToken = () => localStorage.getItem('token')
