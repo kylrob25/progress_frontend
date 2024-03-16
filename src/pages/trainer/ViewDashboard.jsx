@@ -18,9 +18,6 @@ const ViewDashboard = () => {
 
     const [requests, setRequests] = useState([])
 
-    // TODO: Client Dashboard
-    const [client, setClient] = useState(null)
-
     const toggleEditForm = () => {
         setEditingTrainer(!editingTrainer);
     }
@@ -47,12 +44,10 @@ const ViewDashboard = () => {
 
             if (user.roles.includes("TRAINER")){
                 fetchTrainer()
+                return
             }
 
-            if (user.roles.includes("CLIENT")) {
-                fetchClient()
-            }
-
+            navigate("/profile/dashboard")
         } catch (error){
             console.log(error)
         }
@@ -73,18 +68,6 @@ const ViewDashboard = () => {
                 fetchClients(response.data.id)
             }
         } catch (error){
-            console.log(error)
-        }
-    }
-
-    const fetchClient = async () => {
-        const user = getLocalUser()
-        try {
-            const response = await util.get(`http://localhost:8080/api/client/userId/${user.id}`)
-            if(response){
-                setClient(response.data)
-            }
-        } catch (error) {
             console.log(error)
         }
     }
@@ -147,7 +130,7 @@ const ViewDashboard = () => {
 
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
-                    {trainer && !editingTrainer && (
+                    {!editingTrainer && (
                         <Box>
                             <Typography variant="h6">Current Details</Typography>
                             <Typography variant="body1">Cost: {trainerCost}</Typography>
@@ -198,14 +181,13 @@ const ViewDashboard = () => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                    {trainer && (
-                        <Grid container justifyContent="space-between" alignItems="center">
-                            <Grid item>
-                                <Typography variant="h6">Clients</Typography>
-                            </Grid>
+                    <Grid container justifyContent="space-between" alignItems="center">
+                        <Grid item>
+                            <Typography variant="h6">Clients</Typography>
                         </Grid>
-                    )}
-                    {trainer && clients.length > 0 ? (
+                    </Grid>
+
+                    {clients.length > 0 ? (
                         <List sx={{ mt: 2 }}>
                             {clients.map((client, index) => (
                                 <ListItem

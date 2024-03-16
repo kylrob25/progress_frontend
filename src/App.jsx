@@ -9,8 +9,9 @@ import Trainer from "./pages/trainer/ViewTrainer";
 import ViewTrainers from "./pages/trainer/ViewTrainers";
 import CreateUser from "./pages/admin/CreateUser";
 import EditUser from "./pages/admin/EditUser";
-import ViewMessages from "./pages/profile/ViewMessages";
-import ViewDashboard from "./pages/dashboard/ViewDashboard"
+import ViewMessages from "./pages/user/ViewMessages";
+import ViewDashboard from "./pages/trainer/ViewDashboard"
+import ViewUserDashboard from "./pages/user/ViewDashboard";
 
 const App = () => {
     return (
@@ -29,9 +30,10 @@ const App = () => {
 
                     <Route path="/trainer/:username" element={<Trainer/>} />
 
-                    <Route path="/messages" element={<ViewMessages/>} />
+                    <Route path="/profile/messages" element={<ViewMessages/>} />
+                    <Route path="/profile/dashboard" element={<ViewUserDashboard/>} />
 
-                    <Route path="/dashboard" element={<ViewDashboard/>} />
+                    <Route path="/trainer/dashboard" element={<ViewDashboard/>} />
 
                     <Route path="*" element={<NoPage />} />
                 </Route>

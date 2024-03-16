@@ -94,8 +94,8 @@ const NavbarComponent = () => {
 
                 {loggedIn ? (
                     <>
-                        <Button color="inherit" component={Link} to="/dashboard">{username}</Button>
-                        <Button color="inherit" component={Link} to="/messages">Messages</Button>
+                        <Button color="inherit" component={Link} to="/trainer/dashboard">{username}</Button>
+                        <Button color="inherit" component={Link} to="/profile/messages">Messages</Button>
                         <Button color="inherit" onClick={(event) => handleLogout(event)}>Logout</Button>
                     </>
                 ) : (
