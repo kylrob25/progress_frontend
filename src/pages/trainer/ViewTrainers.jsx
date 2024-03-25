@@ -5,8 +5,8 @@ import {
     CardActions,
     CardContent,
     CardMedia,
-    Container,
-    Grid,
+    Container, FormControl,
+    Grid, InputLabel, MenuItem, Select,
     TextField,
     Typography,
 } from "@mui/material";
@@ -17,6 +17,10 @@ const ViewTrainers = () => {
     const [trainers, setTrainers] = useState([]);
     const [filteredTrainers, setFilteredTrainers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+
+    const [filterLocation, setFilterLocation] = useState("");
+    const [filterSpecialization, setFilterSpecialization] = useState("");
+    const [filterCost, setFilterCost] = useState("");
 
     const fetchTrainers = async () => {
         try {
@@ -34,25 +38,71 @@ const ViewTrainers = () => {
 
     useEffect(() => {
         const results = trainers.filter(trainer =>
-            trainer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            trainer.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            trainer.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+            trainer.username.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (filterLocation ? trainer.location === filterLocation : true) &&
+            (filterSpecialization ? trainer.specialization === filterSpecialization : true) &&
+            (filterCost ? trainer.cost <= filterCost : true)
         );
         setFilteredTrainers(results);
-    }, [searchTerm, trainers]);
+    }, [searchTerm, filterLocation, filterSpecialization, filterCost, trainers]);
 
     return (
         <Container maxWidth="lg" style={{marginTop: '20px', marginBottom: '20px'}}>
-            <TextField
-                label="Search"
-                fullWidth
-                margin="dense"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{marginBottom: '20px'}}
-            />
+            <Grid container spacing={2} alignItems="center" style={{ marginBottom: '20px' }}>
+                <Grid item xs={12} sm={6} md={12}>
+                    <TextField
+                        label="Search"
+                        fullWidth
+                        margin="dense"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth>
+                        <InputLabel>Location</InputLabel>
+                        <Select
+                            value={filterLocation}
+                            label="Location"
+                            onChange={(e) => setFilterLocation(e.target.value)}
+                        >
+                            <MenuItem value="">Any</MenuItem>
+                            <MenuItem value="Glasgow">Glasgow</MenuItem>
+                            <MenuItem value="Edinburgh">Edinburgh</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth>
+                        <InputLabel>Specialization</InputLabel>
+                        <Select
+                            value={filterSpecialization}
+                            label="Specialization"
+                            onChange={(e) => setFilterSpecialization(e.target.value)}
+                        >
+                            <MenuItem value="">Any</MenuItem>
+                            <MenuItem value="Fat Loss">Fat Loss</MenuItem>
+                            <MenuItem value="Strength Training">Strength Training</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth>
+                        <InputLabel>Cost Range</InputLabel>
+                        <Select
+                            value={filterCost}
+                            label="Cost Range"
+                            onChange={(e) => setFilterCost(e.target.value)}
+                        >
+                            <MenuItem value="">Any</MenuItem>
+                            <MenuItem value={50}>£0 to £50</MenuItem>
+                            <MenuItem value={150}>£51 to £150</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+            </Grid>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} style={{ marginTop: '20px' }}>
                 {filteredTrainers.length > 0 ? (
                     filteredTrainers.map((trainer) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={trainer.id}>
