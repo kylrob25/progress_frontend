@@ -78,26 +78,6 @@ util.interceptors.response.use(
 
             }
         }
-        /*const conf = error.config
-
-        if (conf.url !== "/auth/login" && error.response){
-            if(error.response.status === 401 && !conf._retry){
-                conf._retry = true;
-
-                try {
-                    const request = await sendRefreshRequest()
-                    const response = request.data
-
-                    localStorage.setItem('token', response.token)
-                    util.defaults.headers['Authorization'] = "Bearer " + response.token
-
-                    return util(conf)
-                } catch (err){
-                    return Promise.reject(err)
-                }
-            }
-        }
-        return Promise.reject(error)*/
     }
 )
 

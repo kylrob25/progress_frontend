@@ -34,7 +34,9 @@ const ViewTrainers = () => {
 
     useEffect(() => {
         const results = trainers.filter(trainer =>
-            trainer.username.toLowerCase().includes(searchTerm.toLowerCase())
+            trainer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            trainer.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            trainer.specialization.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredTrainers(results);
     }, [searchTerm, trainers]);

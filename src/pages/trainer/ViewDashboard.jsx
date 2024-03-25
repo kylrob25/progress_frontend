@@ -1,4 +1,16 @@
-import {Box, Button, Grid, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
+import React from 'react'
+import {
+    Box,
+    Button,
+    CardMedia,
+    Collapse,
+    Grid,
+    List,
+    ListItem,
+    ListItemText,
+    TextField,
+    Typography
+} from "@mui/material";
 import {useEffect, useState} from "react";
 import util, {getLocalUser} from "../../utils/axiosUtil";
 import {useNavigate} from "react-router-dom";
@@ -8,11 +20,15 @@ const ViewDashboard = () => {
     const [trainer, setTrainer] = useState(null)
 
     const [clients, setClients] = useState([])
+
     const [selectedClient, setSelectedClient] = useState(null)
+    const [clientCalories, setClientCalories] = useState('')
+    const [clientWeight, setClientWeight] = useState('')
 
     const [trainerCost, setTrainerCost] = useState('')
     const [trainerLocation, setTrainerLocation] = useState('')
     const [trainerSpecialization, setTrainerSpecialization] = useState('')
+    const [trainerPicture, setTrainerPicture] = useState('')
 
     const [editingTrainer, setEditingTrainer] = useState(false)
 
@@ -24,6 +40,7 @@ const ViewDashboard = () => {
 
     const updateTrainerDetails = async () => {
         const updatedDetails = {
+            pictureUrl: trainerPicture,
             cost: trainerCost,
             location: trainerLocation,
             specialization: trainerSpecialization,
@@ -31,7 +48,7 @@ const ViewDashboard = () => {
         try {
             await util.put(`http://localhost:8080/api/trainer/${trainer.id}`, updatedDetails);
             setEditingTrainer(false);
-            fetchTrainer()
+            await fetchTrainer()
         } catch (error) {
             console.error("Error updating trainer details:", error);
             alert('Failed to update trainer details.');
@@ -43,7 +60,7 @@ const ViewDashboard = () => {
             const user = getLocalUser()
 
             if (user.roles.includes("TRAINER")) {
-                fetchTrainer()
+                await fetchTrainer()
                 return
             }
 
@@ -63,9 +80,10 @@ const ViewDashboard = () => {
                 setTrainerCost(response.data.cost);
                 setTrainerLocation(response.data.location);
                 setTrainerSpecialization(response.data.specialization);
+                setTrainerPicture(response.data.pictureUrl)
 
-                fetchRequests(response.data.id)
-                fetchClients(response.data.id)
+                await fetchRequests(response.data.id)
+                await fetchClients(response.data.id)
             }
         } catch (error) {
             console.log(error)
@@ -94,7 +112,8 @@ const ViewDashboard = () => {
     const acceptRequest = async (trainerId, requestId) => {
         try {
             await util.post(`http://localhost:8080/api/trainer/${trainerId}/requests/${requestId}`)
-            fetchRequests(trainerId)
+            await fetchRequests(trainerId)
+            await fetchClients(trainerId)
         } catch (error) {
             console.log(error)
         }
@@ -103,18 +122,39 @@ const ViewDashboard = () => {
     const denyRequest = async (trainerId, requestId) => {
         try {
             await util.delete(`http://localhost:8080/api/trainer/${trainerId}/requests/${requestId}`)
-            fetchRequests(trainerId)
+            await fetchRequests(trainerId)
         } catch (error) {
             console.log(error)
         }
     }
 
     const handleManageClient = async (trainerId, clientId) => {
+        const selected = clients.find(client => client.id === clientId)
+        if (selectedClient && selectedClient.id === clientId) {
+            setSelectedClient(null)
+        } else {
+            setSelectedClient(selected);
+            setClientCalories(selected.calories)
+            setClientWeight(selected.weight)
+        }
+    }
 
+    const updateClientDetails = async (trainerId, clientId) => {
+        const updatedDetails = {
+            weight: clientWeight,
+            calories: clientCalories
+        }
+        try {
+            await util.put(`http://localhost:8080/api/client/${clientId}/update`, updatedDetails)
+            setSelectedClient(null)
+            await fetchClients(trainerId)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => {
-        fetchUser()
+         fetchUser()
     }, [])
 
     return (
@@ -133,6 +173,17 @@ const ViewDashboard = () => {
                     {!editingTrainer && (
                         <Box>
                             <Typography variant="h6">Current Details</Typography>
+                            <Typography variant="body1">Picture:</Typography>
+                            <CardMedia
+                                component="img"
+                                sx={{
+                                    height: '140px',
+                                    width: '140px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%',
+                                }}
+                                image={trainerPicture}
+                            />
                             <Typography variant="body1">Cost: {trainerCost}</Typography>
                             <Typography variant="body1">Location: {trainerLocation}</Typography>
                             <Typography variant="body1">Specialization: {trainerSpecialization}</Typography>
@@ -144,6 +195,15 @@ const ViewDashboard = () => {
 
                     {editingTrainer && (
                         <Grid container spacing={2}>
+                            <Grid item xs={12} sm={4}>
+                                <TextField
+                                    label="Picture"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={trainerPicture}
+                                    onChange={(e) => setTrainerPicture(e.target.value)}
+                                />
+                            </Grid>
                             <Grid item xs={12} sm={4}>
                                 <TextField
                                     label="Cost"
@@ -189,20 +249,45 @@ const ViewDashboard = () => {
 
                     {clients.length > 0 ? (
                         <List sx={{mt: 2}}>
-                            {clients.map((client, index) => (
-                                <ListItem
-                                    key={client.userId}
-                                    secondaryAction={
-                                        <Button
-                                            variant="contained"
-                                            onClick={() => handleManageClient(trainer.id, client.id)}
-                                        >
-                                            Manage
-                                        </Button>
-                                    }
-                                >
-                                    <ListItemText primary={client.username}/>
-                                </ListItem>
+                            {clients.map((client) => (
+                                <React.Fragment key={client.id}>
+                                    <ListItem
+                                        secondaryAction={
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => handleManageClient(trainer.id, client.id)}
+                                            >
+                                                Manage
+                                            </Button>
+                                        }
+                                    >
+                                        <ListItemText primary={client.username} />
+                                    </ListItem>
+                                    <Collapse in={selectedClient && selectedClient.id === client.id}>
+                                        <Box sx={{ margin: 1, paddingLeft: 4, paddingRight: 4, border: "1px solid #ccc", borderRadius: "4px" }}>
+                                            <Typography variant="h6" sx={{mb: 2}}>Edit Client Details</Typography>
+                                            <TextField
+                                                label="Weight"
+                                                variant="outlined"
+                                                fullWidth
+                                                value={clientWeight}
+                                                onChange={(e) => setClientWeight(e.target.value)}
+                                                sx={{ mb: 2 }}
+                                            />
+                                            <TextField
+                                                label="Calories"
+                                                variant="outlined"
+                                                fullWidth
+                                                value={clientCalories}
+                                                onChange={(e) => setClientCalories(e.target.value)}
+                                                sx={{ mb: 2 }}
+                                            />
+                                            <Button variant="contained" color="primary" onClick={() => updateClientDetails(trainer.id, client.id)}>
+                                                Save Changes
+                                            </Button>
+                                        </Box>
+                                    </Collapse>
+                                </React.Fragment>
                             ))}
                         </List>
                     ) : (
