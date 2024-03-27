@@ -105,7 +105,9 @@ const ViewDashboard = () => {
 
     const fetchClients = async (trainerId) => {
         try {
-            const response = await util.get(`http://localhost:8080/api/trainer/${trainerId}/clients`)
+            const response = await util.get(
+                `http://localhost:8080/api/trainer/${trainerId}/clients`
+            )
             setClients(response.data)
         } catch (error) {
             if (error.response &&

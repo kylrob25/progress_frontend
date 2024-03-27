@@ -13,15 +13,12 @@ const Login = () => {
 
         try {
             await login(username, password)
+            alert("Logged in.")
             navigate('/')
         } catch (error) {
-            if (error.response &&
-                error.response.data &&
-                error.response.data.message) {
-                alert(error.response.data.message);
-            }
+            alert("Invalid login credentials.");
         }
-    };
+    }
 
     return (
         <Container maxWidth="sm" sx={{

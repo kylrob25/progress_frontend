@@ -46,11 +46,14 @@ const ViewMessages = () => {
                         ...conversation,
                         lastMessage: message.text,
                         lastTimestamp: message.timestamp
-                    };
+                    }
                 }
                 return conversation
-            }));
-            setConversations(conversationsWithLastMessage);
+            }))
+            setConversations(conversationsWithLastMessage)
+            if (conversationsWithLastMessage.length > 0) {
+                await handleSelectConversation(conversationsWithLastMessage[conversationsWithLastMessage.length - 1])
+            }
         } catch (error) {
             if (error.response &&
                 error.response.data &&

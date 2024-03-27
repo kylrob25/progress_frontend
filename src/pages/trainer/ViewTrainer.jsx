@@ -60,6 +60,11 @@ const ViewTrainer = () => {
     const handleRequestButton = async () => {
         const user = getLocalUser()
 
+        if (user === null || !user.id) {
+            navigate("/login")
+            return
+        }
+
         if (user.id === trainer.userId) {
             alert("You can't train yourself..")
             return
