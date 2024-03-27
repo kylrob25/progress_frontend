@@ -138,8 +138,13 @@ const ViewMessages = () => {
 
             setMessages([...messages, sentMessage]);
             setNewMessage('');
-        } catch (err) {
-            console.error("Failed to send message:", err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.error("Failed to send message:", error.message);
         }
     }
 
@@ -155,8 +160,13 @@ const ViewMessages = () => {
             await util.delete(`http://localhost:8080/api/message/${messageId}`);
 
             setMessages(prevMessages => prevMessages.filter(message => message.id !== messageId));
-        } catch (err) {
-            console.error("Failed to delete message:", err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.error("Failed to delete message:", error.message);
         }
     };
 
@@ -172,6 +182,11 @@ const ViewMessages = () => {
             await util.delete(`http://localhost:8080/api/conversation/${conversationId}/leave/${user.id}`)
             await fetchConversations()
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -188,6 +203,11 @@ const ViewMessages = () => {
             setNewParticipantUsername('')
             await fetchConversations()
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
