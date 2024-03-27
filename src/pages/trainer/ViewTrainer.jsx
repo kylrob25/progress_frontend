@@ -13,8 +13,13 @@ const ViewTrainer = () => {
         try {
             const trainerData = await util.get(`http://localhost:8080/api/trainer/username/${username}`)
             setTrainer(trainerData.data);
-        } catch (err) {
-            console.log(err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.log(error.message);
         }
     }
 
@@ -43,6 +48,11 @@ const ViewTrainer = () => {
                 navigate("/messages")
             }
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -59,6 +69,11 @@ const ViewTrainer = () => {
             await util.put(`http://localhost:8080/api/trainer/${trainer.id}/requests/${user.id}`)
             alert("Sent training request.")
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }

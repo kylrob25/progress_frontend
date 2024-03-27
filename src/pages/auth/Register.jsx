@@ -26,6 +26,11 @@ const Login = () => {
 
             navigate("/login")
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.error("Error registering user:", error);
         }
     };

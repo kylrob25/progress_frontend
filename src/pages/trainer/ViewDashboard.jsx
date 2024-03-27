@@ -51,8 +51,12 @@ const ViewDashboard = () => {
             setEditingTrainer(false);
             await fetchTrainer()
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.error("Error updating trainer details:", error);
-            alert('Failed to update trainer details.');
         }
     }
 
@@ -67,6 +71,11 @@ const ViewDashboard = () => {
 
             navigate("/profile/dashboard")
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -85,6 +94,11 @@ const ViewDashboard = () => {
             await fetchRequests(response.data.id)
             await fetchClients(response.data.id)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -94,6 +108,11 @@ const ViewDashboard = () => {
             const response = await util.get(`http://localhost:8080/api/trainer/${trainerId}/clients`)
             setClients(response.data)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -103,8 +122,12 @@ const ViewDashboard = () => {
             const response = await util.get(`http://localhost:8080/api/trainer/${trainerId}/requests`)
             setRequests(response.data)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
-            alert(error)
         }
     }
 
@@ -114,6 +137,11 @@ const ViewDashboard = () => {
             await fetchRequests(trainerId)
             await fetchClients(trainerId)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -123,6 +151,11 @@ const ViewDashboard = () => {
             await util.delete(`http://localhost:8080/api/trainer/${trainerId}/requests/${requestId}`)
             await fetchRequests(trainerId)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -148,6 +181,11 @@ const ViewDashboard = () => {
             setSelectedClient(null)
             await fetchClients(trainerId)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error);
         }
     }

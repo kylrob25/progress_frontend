@@ -14,8 +14,12 @@ const Login = () => {
         try {
             await login(username, password)
             navigate('/')
-        } catch (err) {
-            alert(err)
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
         }
     };
 

@@ -24,7 +24,11 @@ const NavbarComponent = () => {
             await logout()
             navigate("/")
         } catch (error) {
-            alert(error)
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
         }
     }
 

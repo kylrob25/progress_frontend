@@ -28,8 +28,13 @@ const ViewTrainers = () => {
             const response = await axios.get('http://localhost:8080/api/trainer');
             setTrainers(response.data);
             setFilteredTrainers(response.data);
-        } catch (err) {
-            console.log(err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.log(error.message);
         }
     };
 

@@ -51,8 +51,13 @@ const ViewMessages = () => {
                 return conversation
             }));
             setConversations(conversationsWithLastMessage);
-        } catch (err) {
-            console.error("Failed to fetch conversations:", err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.error("Failed to fetch conversations:", error.message);
         }
     };
 
@@ -78,8 +83,13 @@ const ViewMessages = () => {
             });
 
             await fetchConversations();
-        } catch (err) {
-            console.error("Failed to create conversation:", err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.error("Failed to create conversation:", error.message);
         }
     };
 
@@ -90,8 +100,13 @@ const ViewMessages = () => {
             const res = await axios.get(`http://localhost:8080/api/conversation/${conversation.id}/messages`);
             const sortedMessages = res.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             setMessages(sortedMessages);
-        } catch (err) {
-            console.error("Failed to fetch messages:", err.message);
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.error("Failed to fetch messages:", error.message);
         }
     };
 

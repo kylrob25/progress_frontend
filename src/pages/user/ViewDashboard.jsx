@@ -21,6 +21,11 @@ const ViewUserDashboard = () => {
             setClient(response.data)
             await fetchTrainer(response.data.trainerId)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -30,6 +35,11 @@ const ViewUserDashboard = () => {
             const response = await util.get(`http://localhost:8080/api/trainer/${trainerId}`)
             setTrainer(response.data)
         } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
             console.log(error)
         }
     }
@@ -72,9 +82,13 @@ const ViewUserDashboard = () => {
                     Dashboard
                 </Typography>
                 <Box>
-                    <Button variant="contained" onClick={() => handleBecomeTrainer()} sx={{ marginRight: 1 }}>
-                        Become a Trainer
-                    </Button>
+                    {!trainer && (
+                        <>
+                            <Button variant="contained" onClick={() => handleBecomeTrainer()} sx={{ marginRight: 1 }}>
+                                Become a Trainer
+                            </Button>
+                        </>
+                    )}
                     <Button variant="contained">
                         Account Settings
                     </Button>
