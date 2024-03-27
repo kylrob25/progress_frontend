@@ -14,6 +14,7 @@ import {
 import {useEffect, useState} from "react";
 import util, {getLocalUser} from "../../utils/axiosUtil";
 import {useNavigate} from "react-router-dom";
+import defaultProfilePicture from '../../assets/images/default_profile_picture.png'
 
 const ViewDashboard = () => {
     const navigate = useNavigate()
@@ -74,17 +75,15 @@ const ViewDashboard = () => {
         const user = getLocalUser()
         try {
             const response = await util.get(`http://localhost:8080/api/trainer/userId/${user.id}`)
-            if (response) {
-                setTrainer(response.data)
+            setTrainer(response.data)
 
-                setTrainerCost(response.data.cost);
-                setTrainerLocation(response.data.location);
-                setTrainerSpecialization(response.data.specialization);
-                setTrainerPicture(response.data.pictureUrl)
+            setTrainerCost(response.data.cost || 0.0);
+            setTrainerLocation(response.data.location || "Unknown");
+            setTrainerSpecialization(response.data.specialization || "Unknown");
+            setTrainerPicture(response.data.pictureUrl || "")
 
-                await fetchRequests(response.data.id)
-                await fetchClients(response.data.id)
-            }
+            await fetchRequests(response.data.id)
+            await fetchClients(response.data.id)
         } catch (error) {
             console.log(error)
         }
@@ -182,7 +181,7 @@ const ViewDashboard = () => {
                                     objectFit: 'cover',
                                     borderRadius: '50%',
                                 }}
-                                image={trainerPicture}
+                                image={trainerPicture || defaultProfilePicture}
                             />
                             <Typography variant="body1">Cost: {trainerCost}</Typography>
                             <Typography variant="body1">Location: {trainerLocation}</Typography>

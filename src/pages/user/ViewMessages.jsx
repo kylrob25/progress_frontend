@@ -69,7 +69,7 @@ const ViewMessages = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/conversation', {
+            await axios.post('http://localhost:8080/api/conversation', {
                 creatorId: user.id,
                 participantIds: [user.id],
                 participantNames: [user.username],
@@ -77,7 +77,7 @@ const ViewMessages = () => {
                 lastMessageId: -1
             });
 
-            fetchConversations();
+            await fetchConversations();
         } catch (err) {
             console.error("Failed to create conversation:", err.message);
         }
@@ -113,6 +113,7 @@ const ViewMessages = () => {
             const response = await axios.post(`http://localhost:8080/api/message`, {
                 conversationId: selectedConversation.id,
                 senderId: user.id,
+                sender: user.username,
                 text: newMessage,
             });
             const sentMessage = response.data;
@@ -151,7 +152,7 @@ const ViewMessages = () => {
 
         try {
             await util.delete(`http://localhost:8080/api/conversation/${conversationId}/leave/${user.id}`)
-            fetchConversations()
+            await fetchConversations()
         } catch (error) {
             console.log(error)
         }
@@ -165,10 +166,9 @@ const ViewMessages = () => {
         const conversationId = selectedConversation.id
 
         try {
-            await util.put(`http://localhost:8080/api/conversation/${conversationId}/add`, {
-                username
-            })
+            await util.put(`http://localhost:8080/api/conversation/${conversationId}/add/${username}`)
             setNewParticipantUsername('')
+            await fetchConversations()
         } catch (error) {
             console.log(error)
         }
@@ -226,7 +226,7 @@ const ViewMessages = () => {
                                     }>
                                         <ListItemText
                                             primary={message.text}
-                                            secondary={new Date(message.timestamp).toLocaleString() + " | " + message.senderId}
+                                            secondary={new Date(message.timestamp).toLocaleString() + " | " + message.sender}
                                         />
                                     </ListItem>
                                 ))}

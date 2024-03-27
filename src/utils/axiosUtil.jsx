@@ -31,7 +31,23 @@ const setLocalUser = (response) => {
     };
     localStorage.setItem('user', JSON.stringify(user));
     return user;
-};
+}
+
+const addRoleToLocalUser = (role) => {
+    const user = getLocalUser()
+
+    if (!user) {
+        return null
+    }
+
+    if (!user.roles.includes(role)) {
+        user.roles.push(role);
+    }
+
+    localStorage.setItem('user', JSON.stringify(user));
+
+    return user;
+}
 
 const login = async (username, password) => {
     try {
@@ -81,5 +97,5 @@ util.interceptors.response.use(
     }
 )
 
-export {getLocalUser, login, logout}
+export {getLocalUser, login, logout, addRoleToLocalUser}
 export default util

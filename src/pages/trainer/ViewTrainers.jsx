@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import {Link} from 'react-router-dom';
 import axios from "axios";
+import defaultProfilePicture from '../../assets/images/default_profile_picture.png'
 
 const ViewTrainers = () => {
     const [trainers, setTrainers] = useState([]);
@@ -67,6 +68,7 @@ const ViewTrainers = () => {
                             onChange={(e) => setFilterLocation(e.target.value)}
                         >
                             <MenuItem value="">Any</MenuItem>
+                            <MenuItem value="Unknown">Unknown</MenuItem>
                             <MenuItem value="Glasgow">Glasgow</MenuItem>
                             <MenuItem value="Edinburgh">Edinburgh</MenuItem>
                         </Select>
@@ -81,6 +83,7 @@ const ViewTrainers = () => {
                             onChange={(e) => setFilterSpecialization(e.target.value)}
                         >
                             <MenuItem value="">Any</MenuItem>
+                            <MenuItem value="Unknown">Unknown</MenuItem>
                             <MenuItem value="Fat Loss">Fat Loss</MenuItem>
                             <MenuItem value="Strength Training">Strength Training</MenuItem>
                         </Select>
@@ -110,7 +113,7 @@ const ViewTrainers = () => {
                                 <CardMedia
                                     component="img"
                                     height="150"
-                                    image={trainer.pictureUrl}
+                                    image={trainer.pictureUrl || defaultProfilePicture}
                                     alt={trainer.username}
                                 />
                                 <CardContent>

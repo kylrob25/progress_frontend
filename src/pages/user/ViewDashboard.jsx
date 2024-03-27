@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import util, {getLocalUser} from "../../utils/axiosUtil";
+import util, {getLocalUser, addRoleToLocalUser} from "../../utils/axiosUtil";
 import {useNavigate} from "react-router-dom";
 import {Box, Button, Grid, Typography} from "@mui/material";
 
@@ -22,8 +22,6 @@ const ViewUserDashboard = () => {
             await fetchTrainer(response.data.trainerId)
         } catch (error) {
             console.log(error)
-            navigate("/")
-            alert("You do not have a trainer.")
         }
     }
 
@@ -40,6 +38,29 @@ const ViewUserDashboard = () => {
         // TODO:
     }
 
+    const handleBecomeTrainer = async () => {
+        const user = getLocalUser()
+        try {
+            await util.post('http://localhost:8080/api/trainer', {
+                userId: user.id,
+                username: user.username,
+                cost: 0.0,
+                location: "Unknown",
+                specialization: "Unknown"
+            })
+
+            addRoleToLocalUser('TRAINER')
+            navigate("/trainer/dashboard")
+        } catch (error) {
+            if (error.response &&
+                error.response.data &&
+                error.response.data.message) {
+                alert(error.response.data.message);
+            }
+            console.log(error)
+        }
+    }
+
     useEffect(() => {
         fetchClient()
     }, []);
@@ -50,24 +71,54 @@ const ViewUserDashboard = () => {
                 <Typography variant="h4" component="h1" gutterBottom>
                     Dashboard
                 </Typography>
-                <Button variant="contained">
-                    Become a Trainer
-                </Button>
-                <Button variant="contained">
-                    Account Settings
-                </Button>
+                <Box>
+                    <Button variant="contained" onClick={() => handleBecomeTrainer()} sx={{ marginRight: 1 }}>
+                        Become a Trainer
+                    </Button>
+                    <Button variant="contained">
+                        Account Settings
+                    </Button>
+                </Box>
             </Box>
 
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Box>
-                            {trainer && (
+                            {trainer ? (
                                 <>
                                     <Typography variant="h6">Your Trainer: {trainer.username}</Typography>
-                                    <Typography variant="body1">Cost: {trainer.cost}</Typography>
-                                    <Typography variant="body1">Location: {trainer.location}</Typography>
-                                    <Typography variant="body1">Specialization: {trainer.specialization}</Typography>
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Cost:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'green' }}>
+                                            {' '}{trainer.cost}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Location:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'green' }}>
+                                            {' '}{trainer.location}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Specialization:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'green' }}>
+                                            {' '}{trainer.specialization}
+                                        </Typography>
+                                    </Box>
+                                </>
+                            ) : (
+                                <>
+                                    <Typography variant="h6">Trainer</Typography>
+                                    <Typography variant="body1">You do not have a trainer :( </Typography>
                                 </>
                             )}
                         </Box>
@@ -77,13 +128,55 @@ const ViewUserDashboard = () => {
                 <Grid item xs={12} sm={4}>
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
-                            <Typography variant="h6">Macros</Typography>
-                            <Typography variant="body1">Current Weight: {client.weight}</Typography>
-                            <Typography variant="body1">Calories: {client.calories}</Typography>
+                            {client && (
+                                <>
+                                    <Typography variant="h6">Information</Typography>
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Weight:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'green' }}>
+                                            {' '}{client.weight}
+                                        </Typography>
+                                    </Box>
 
-                            <Typography variant="body1">Carbs: 250g</Typography>
-                            <Typography variant="body1">Fat: 45g</Typography>
-                            <Typography variant="body1">Protein: 125g</Typography>
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Calories:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'orange' }}>
+                                            {' '}{client.calories}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Carbs:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'blue' }}>
+                                            {' '}250g
+                                        </Typography>
+                                    </Box>
+
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Fat:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'blue' }}>
+                                            {' '}45g
+                                        </Typography>
+                                    </Box>
+
+                                    <Box>
+                                        <Typography variant="body1" component="span" sx={{ fontWeight: 'bold' }}>
+                                            Protein:
+                                        </Typography>
+                                        <Typography variant="body1" component="span" sx={{ color: 'blue' }}>
+                                            {' '}125g
+                                        </Typography>
+                                    </Box>
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -91,7 +184,12 @@ const ViewUserDashboard = () => {
                 <Grid item xs={12} sm={4}>
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
-                            <Typography variant="h6">Payments</Typography>
+                            {client && (
+                                <>
+                                    <Typography variant="h6">Payments</Typography>
+                                    <Typography variant="body1">No payments have been made.</Typography>
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
